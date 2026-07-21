@@ -2946,14 +2946,14 @@ body::after{
     <div id="search-fullpage-count"></div>
   </div>
   <div id="search-fullpage-filters">
-    <button class="sfp-filter active" data-type="all" onclick="sfpFilter(this,'all')">Semua</button>
-    <button class="sfp-filter" data-type="movie" onclick="sfpFilter(this,'movie')">Film</button>
-    <button class="sfp-filter" data-type="tv" onclick="sfpFilter(this,'tv')">Series</button>
+    <button class="sfp-filter active" id="sfp-filter-all" data-type="all" onclick="sfpFilter(this,'all')">Semua</button>
+    <button class="sfp-filter" id="sfp-filter-movie" data-type="movie" onclick="sfpFilter(this,'movie')">Film</button>
+    <button class="sfp-filter" id="sfp-filter-tv" data-type="tv" onclick="sfpFilter(this,'tv')">Series</button>
     <select id="sfp-sort" onchange="sfpSort(this.value)">
-      <option value="popularity">Terpopuler</option>
-      <option value="vote_average">Rating Tertinggi</option>
-      <option value="release_date">Terbaru</option>
-      <option value="title">A-Z</option>
+      <option value="popularity" id="opt-sfp-pop">Terpopuler</option>
+      <option value="vote_average" id="opt-sfp-rating">Rating Tertinggi</option>
+      <option value="release_date" id="opt-sfp-new">Terbaru</option>
+      <option value="title" id="opt-sfp-az">A-Z</option>
     </select>
   </div>
   <div id="search-fullpage-grid"></div>
@@ -2991,10 +2991,10 @@ body::after{
         </div>
         <div id="hero-overview"></div>
         <div id="hero-btns">
-          <button class="hero-btn hero-btn-primary" onclick="watchHero()">
+          <button class="hero-btn hero-btn-primary" id="btn-hero-watch" onclick="watchHero()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>Tonton
           </button>
-          <button class="hero-btn hero-btn-secondary" onclick="infoHero()">
+          <button class="hero-btn hero-btn-secondary" id="btn-hero-info" onclick="infoHero()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Info
           </button>
         </div>
@@ -3075,10 +3075,14 @@ body::after{
 
   <!-- HISTORY -->
   <section id="sec-tv" class="section">
-    <div class="section-header-bar">
-      <h2 class="section-title-main" id="hdr-tv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10"/><path d="M5 12c0-3.87 3.13-7 7-7s7 3.13 7 7"/><circle cx="12" cy="12" r="2"/><line x1="12" y1="14" x2="12" y2="22"/></svg> TV Shows</h2>
+    <div class="section-header-bar" style="padding:16px 12px 8px;">
+      <h2 style="font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--text1),var(--neon-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:8px;" id="hdr-tv"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10"/><path d="M5 12c0-3.87 3.13-7 7-7s7 3.13 7 7"/><circle cx="12" cy="12" r="2"/><line x1="12" y1="14" x2="12" y2="22"/></svg> TV Shows</h2>
     </div>
     <div style="padding:0 12px 8px;">
+      <button class="filter-btn-main" onclick="openFilterPanel('tv')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        Filter & Discovery
+      </button>
       <div class="filter-bar" id="tv-filter-bar"></div>
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
         <button class="filter-btn active" id="tv-tab-airing" onclick="switchTvTab('airing',this)">Tayang Hari Ini</button>
@@ -3204,14 +3208,14 @@ body::after{
       <!-- Action Buttons -->
       <div id="detail-action-btns"></div>
       <!-- TAB NAVIGATION -->
-      <div id="detail-tabs-nav">
-        <button class="detail-tab-btn active" onclick="switchDetailTab('overview',this)">Overview</button>
-        <button class="detail-tab-btn" id="tab-btn-episodes" onclick="switchDetailTab('episodes',this)">Episode</button>
-        <button class="detail-tab-btn" onclick="switchDetailTab('trailer',this)">Trailer</button>
-        <button class="detail-tab-btn" onclick="switchDetailTab('cast',this)">Pemeran</button>
-        <button class="detail-tab-btn" onclick="switchDetailTab('reviews',this)">Ulasan</button>
-        <button class="detail-tab-btn" onclick="switchDetailTab('similar',this)">Serupa</button>
-      </div>
+        <div id="detail-tabs-nav">
+          <button class="detail-tab-btn active" id="tab-btn-overview" onclick="switchDetailTab('overview',this)">Overview</button>
+          <button class="detail-tab-btn" id="tab-btn-episodes" onclick="switchDetailTab('episodes',this)">Episode</button>
+          <button class="detail-tab-btn" id="tab-btn-trailer" onclick="switchDetailTab('trailer',this)">Trailer</button>
+          <button class="detail-tab-btn" id="tab-btn-cast" onclick="switchDetailTab('cast',this)">Pemeran</button>
+          <button class="detail-tab-btn" id="tab-btn-reviews" onclick="switchDetailTab('reviews',this)">Ulasan</button>
+          <button class="detail-tab-btn" id="tab-btn-similar" onclick="switchDetailTab('similar',this)">Serupa</button>
+        </div>
       <!-- TAB: OVERVIEW -->
       <div class="detail-tab-panel active" id="tab-overview">
         <div id="detail-overview" style="font-size:13px;line-height:1.7;color:var(--text2);margin-bottom:14px;"></div>
@@ -3219,14 +3223,14 @@ body::after{
         <div id="detail-extra-info"></div>
         <div id="detail-prod-companies"></div>
         <div id="detail-servers-wrap" style="margin-top:14px;">
-          <div class="detail-section-title">
+          <div class="detail-section-title" id="lbl-detail-server">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
             Server Streaming
           </div>
           <div id="server-list"></div>
         </div>
         <div id="detail-gallery-wrap" style="margin-top:14px;">
-          <div class="detail-section-title">
+          <div class="detail-section-title" id="lbl-detail-gallery">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             Galeri Screenshot
           </div>
@@ -3251,12 +3255,12 @@ body::after{
       <!-- TAB: CAST -->
       <div class="detail-tab-panel" id="tab-cast">
         <div id="detail-cast-wrap">
-          <div class="detail-section-title" style="margin-bottom:10px;">
+          <div class="detail-section-title" id="lbl-detail-cast" style="margin-bottom:10px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Pemeran Utama
           </div>
           <div id="detail-cast-scroll"></div>
-          <div class="detail-section-title" style="margin:14px 0 10px;">
+          <div class="detail-section-title" id="lbl-detail-crew" style="margin:14px 0 10px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
             Kru Utama
           </div>
@@ -3441,6 +3445,8 @@ body::after{
 
     <div class="filter-group-title">Tahun Rilis</div>
     <div class="filter-grid-chips" id="filter-year-grid">
+      <div class="filter-chip" onclick="setFilterYear('2026', this)">2026</div>
+      <div class="filter-chip" onclick="setFilterYear('2025', this)">2025</div>
       <div class="filter-chip" onclick="setFilterYear('2024', this)">2024</div>
       <div class="filter-chip" onclick="setFilterYear('2023', this)">2023</div>
       <div class="filter-chip" onclick="setFilterYear('2022', this)">2022</div>
@@ -3595,6 +3601,18 @@ body::after{
     window._adBlockCount++;
     window._adBlockSession++;
     localStorage.setItem('abcx_total_blocked', window._adBlockCount);
+
+    // Ying: Otomatis tandain domain iklan biar gak muncul lagi sayang
+    if (url && !isWhitelisted(url)) {
+      const domain = extractDomain(url);
+      if (domain && !DEFAULT_BLACKLIST.includes(domain)) {
+        let custom = JSON.parse(localStorage.getItem('abcx_custom_blacklist') || '[]');
+        if (!custom.includes(domain)) {
+          custom.push(domain);
+          localStorage.setItem('abcx_custom_blacklist', JSON.stringify(custom));
+        }
+      }
+    }
     showAdNotif(reason || 'default', url);
   }
 
@@ -3926,8 +3944,9 @@ let state = {
   heroTimer: null,
   currentDetail: null,
   currentPlayer: {id:null,type:null,season:1,episode:1,serverIdx:0},
-  filmData: {items:[],page:1,genre:null,sort:'pop'},
-  seriesData: {items:[],page:1,genre:null,sort:'pop'},
+  filmData: {items:[],page:1,sort:'pop', filters: {genre:null, country:'', year:''}},
+  seriesData: {items:[],page:1,sort:'pop', filters: {genre:null, country:'', year:''}},
+  tvData: {items:[],page:1,tab:'airing', filters: {genre:null, country:'', year:''}},
   viewAll: {items:[],filtered:[],page:0,perPage:18,title:'',type:'',genre:null,sort:'pop'},
   lightboxImgs: [],
   lightboxIdx: 0,
@@ -3974,18 +3993,56 @@ const TV_PATHS = {
 
 async function loadTvSection() {
   window._tvLoaded = true;
-  _tvData = {tab:'airing', page:1, items:[]};
-  await loadTvPage();
+  state.tvData = {tab:'airing', page:1, items:[], filters: {genre:null, country:'', year:''}};
+
+  // Render TV Genre Bar
+  renderFilterBar('tv-filter-bar', GENRES_TV, 'tv');
+
+  await loadTvPage(true);
 }
 
-async function loadTvPage() {
-  const path = TV_PATHS[_tvData.tab] || '/tv/airing_today';
-  const data = await tmdb(path, {page: _tvData.page});
-  const items = data?.results || [];
-  _tvData.items.push(...items);
-  _tvData.page++;
+async function loadTvPage(reset = false) {
   const grid = document.getElementById('tv-grid');
+  if (reset) {
+    state.tvData.page = 1;
+    state.tvData.items = [];
+    grid.innerHTML = '';
+  }
+
+  const f = state.tvData.filters;
+  const isDiscover = f.genre || f.country || f.year;
+
+  let path, params;
+
+  if (isDiscover) {
+    path = '/discover/tv';
+    params = {
+      page: state.tvData.page,
+      sort_by: 'popularity.desc'
+    };
+    if (f.genre) params.with_genres = f.genre;
+    if (f.country) params.with_origin_country = f.country;
+    if (f.year) {
+      if (f.year.includes('-')) {
+        const [start, end] = f.year.split('-');
+        params['first_air_date.gte'] = `${start}-01-01`;
+        params['first_air_date.lte'] = `${end}-12-31`;
+      } else {
+        params['first_air_date_year'] = f.year;
+      }
+    }
+  } else {
+    path = TV_PATHS[state.tvData.tab] || '/tv/airing_today';
+    params = { page: state.tvData.page };
+  }
+
+  const data = await tmdb(path, params);
+  const items = data?.results || [];
+  state.tvData.items.push(...items);
+  state.tvData.page++;
+
   items.forEach(item => {
+    const title = item.name || '';
     const poster = item.poster_path ? IMG_BASE+'w342'+item.poster_path : 'https://via.placeholder.com/110x165/111118/00f5ff?text=No+Image';
     const rating = (item.vote_average||0).toFixed(1);
     const year = (item.first_air_date||'').slice(0,4);
@@ -3993,11 +4050,11 @@ async function loadTvPage() {
     card.className = 'film-card';
     card.onclick = () => openDetail(item.id, 'tv');
     card.innerHTML = `
-      <img class="film-card-img" src="${poster}" alt="${item.name||''}" loading="lazy" onerror="this.src='https://via.placeholder.com/110x165/111118/00f5ff?text=No+Image'">
+      <img class="film-card-img" src="${poster}" alt="${title}" loading="lazy" onerror="this.src='https://via.placeholder.com/110x165/111118/00f5ff?text=No+Image'">
       <div class="film-card-rating"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>${rating}</div>
       <div class="film-card-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg></div>
       <div class="film-card-overlay">
-        <div class="film-card-title">${item.name||''}</div>
+        <div class="film-card-title">${title}</div>
         <div class="film-card-meta">${year} · Series</div>
       </div>`;
     grid.appendChild(card);
@@ -4007,13 +4064,41 @@ async function loadTvPage() {
 function switchTvTab(tab, btn) {
   document.querySelectorAll('#sec-tv .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  _tvData = {tab, page:1, items:[]};
-  document.getElementById('tv-grid').innerHTML = '';
-  loadTvPage();
+
+  // Reset Discovery filters when switching to a built-in category
+  state.tvData.filters = {genre:null, country:'', year:''};
+  document.querySelectorAll('#tv-filter-bar .filter-btn').forEach(b => b.classList.toggle('active', !b.textContent.includes('All') && b.textContent === 'Semua'));
+
+  state.tvData.tab = tab;
+  loadTvPage(true);
 }
 
 function loadMoreTv() {
-  loadTvPage();
+  loadTvPage(false);
+}
+
+// ============================================================
+// NAVIGATION & HISTORY API (Ying Fix: Back Button Android)
+// ============================================================
+window.addEventListener('popstate', function(event) {
+  // Ying: Handle tombol kembali biar gak langsung keluar browser
+  if (document.getElementById('player-modal').classList.contains('open')) {
+    closePlayer(true);
+  } else if (document.getElementById('detail-modal').classList.contains('open')) {
+    closeDetail(true);
+  } else if (document.getElementById('search-fullpage').classList.contains('open')) {
+    closeSearchFullpage(true);
+  } else if (document.getElementById('view-all-page').classList.contains('active')) {
+    closeViewAll(true);
+  } else if (document.getElementById('settings-modal').classList.contains('open')) {
+    closeSettings(true);
+  } else if (document.getElementById('filter-panel-modal').classList.contains('open')) {
+    closeFilterPanel(true);
+  }
+});
+
+function pushState() {
+  history.pushState({ modal: true }, null, "");
 }
 
 function showSection(name) {
@@ -4152,34 +4237,38 @@ function infoHero() {
 // HOME ROWS
 // ============================================================
 const HOME_ROWS = [
-  {title:'Trending Minggu Ini', icon:'🔥', path:'/trending/all/week', type:'mixed'},
-  {title:'Film Populer', icon:'🎬', path:'/movie/popular', type:'movie'},
-  {title:'Series Populer', icon:'📺', path:'/tv/popular', type:'tv'},
-  {title:'Film Terbaru', icon:'✨', path:'/movie/now_playing', type:'movie'},
-  {title:'Top Rated Film', icon:'⭐', path:'/movie/top_rated', type:'movie'},
-  {title:'Top Rated Series', icon:'🏆', path:'/tv/top_rated', type:'tv'},
-  {title:'Anime Populer', icon:'🎌', path:'/discover/tv', type:'tv', params:{with_genres:'16',sort_by:'popularity.desc'}},
-  {title:'Aksi & Petualangan', icon:'💥', path:'/discover/movie', type:'movie', params:{with_genres:'28,12'}},
-  {title:'Komedi', icon:'😂', path:'/discover/movie', type:'movie', params:{with_genres:'35'}},
-  {title:'Horror', icon:'👻', path:'/discover/movie', type:'movie', params:{with_genres:'27'}},
+  {key:'rTrending', icon:'🔥', path:'/trending/all/week', type:'mixed'},
+  {key:'rPopMovie', icon:'🎬', path:'/movie/popular', type:'movie'},
+  {key:'rPopSeries', icon:'📺', path:'/tv/popular', type:'tv'},
+  {key:'rNewMovie', icon:'✨', path:'/movie/now_playing', type:'movie'},
+  {key:'rTopMovie', icon:'⭐', path:'/movie/top_rated', type:'movie'},
+  {key:'rTopSeries', icon:'🏆', path:'/tv/top_rated', type:'tv'},
+  {key:'rAnime', icon:'🎌', path:'/discover/tv', type:'tv', params:{with_genres:'16',sort_by:'popularity.desc'}},
+  {key:'rAction', icon:'💥', path:'/discover/movie', type:'movie', params:{with_genres:'28,12'}},
+  {key:'rComedy', icon:'😂', path:'/discover/movie', type:'movie', params:{with_genres:'35'}},
+  {key:'rHorror', icon:'👻', path:'/discover/movie', type:'movie', params:{with_genres:'27'}},
 ];
 
 async function initHomeRows() {
+  const lang = state.settings.language || 'id-ID';
+  const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   const container = document.getElementById('home-rows');
   // Render skeletons first
-  container.innerHTML = HOME_ROWS.map((row,i) => `
+  container.innerHTML = HOME_ROWS.map((row,i) => {
+    const title = t[row.key] || row.key;
+    return `
     <div class="row-wrap" id="row-${i}">
       <div class="row-title">
-        <div class="row-title-left">${row.icon} ${row.title}</div>
-        <div class="row-see-all" onclick="openViewAll('${row.title}','${row.type}','${row.path}',${JSON.stringify(row.params||{})})">
-          Lihat Semua <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        <div class="row-title-left">${row.icon} ${title}</div>
+        <div class="row-see-all" onclick="openViewAll('${title}','${row.type}','${row.path}',${JSON.stringify(row.params||{})})">
+          ${t.seeAll} <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>
       <div class="row-scroll" id="row-scroll-${i}">
         ${Array(8).fill('<div class="skeleton-card"><div class="skeleton skeleton-card-img"></div></div>').join('')}
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 
   // Load rows in parallel batches
   const batch1 = HOME_ROWS.slice(0,5);
@@ -4190,12 +4279,15 @@ async function initHomeRows() {
 }
 
 async function loadRow(row, idx) {
+  const lang = state.settings.language || 'id-ID';
+  const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   const data = await tmdb(row.path, {page:1, ...(row.params||{})});
   const items = data?.results || [];
   const scroll = document.getElementById('row-scroll-'+idx);
   if (!scroll) return;
   
-  const isTop10 = row.title.includes('Top Rated');
+  const titleText = t[row.key] || row.key;
+  const isTop10 = titleText.includes('Top Rated');
   scroll.innerHTML = items.slice(0,15).map((item,i) => {
     const type = item.media_type || row.type;
     const title = item.title || item.name || '';
@@ -4222,6 +4314,8 @@ async function loadRow(row, idx) {
 // CONTINUE WATCHING
 // ============================================================
 function renderContinueWatching() {
+  const lang = state.settings.language || 'id-ID';
+  const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   const cw = JSON.parse(localStorage.getItem('abcx_cw')||'[]');
   const section = document.getElementById('continue-watching-section');
   const scroll = document.getElementById('cw-scroll');
@@ -4234,7 +4328,7 @@ function renderContinueWatching() {
       <div class="film-card-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg></div>
       <div class="film-card-overlay">
         <div class="film-card-title">${item.title}</div>
-        <div class="film-card-meta">${item.progress||30}% ditonton</div>
+        <div class="film-card-meta">${item.progress||30}% ${t.watchedCount}</div>
       </div>
     </div>
   `).join('');
@@ -4286,13 +4380,27 @@ let filterState = {
 };
 
 function openFilterPanel(type) {
+  pushState();
   const lang = state.settings.language || 'id-ID';
   const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   filterState.type = type;
+
+  // Ying: Load filter yang udah ada biar gak ilang pas buka lagi
+  let current;
+  if (type === 'film') current = state.filmData.filters;
+  else if (type === 'series') current = state.seriesData.filters;
+  else if (type === 'tv') current = state.tvData.filters;
+
+  if (current) {
+    filterState.genre = current.genre;
+    filterState.country = current.country;
+    filterState.year = current.year;
+  }
+
   document.getElementById('filter-panel-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Translate modal labels
+  // ... (rest of the translations)
   document.querySelector('#filter-panel-inner h3').textContent = t.fTitle || 'ADVANCED DISCOVERY';
   const groupTitles = document.querySelectorAll('.filter-group-title');
   if (groupTitles.length >= 4) {
@@ -4320,6 +4428,12 @@ function openFilterPanel(type) {
     yearChips[10].textContent = t.fVintage || 'Vintage';
   }
 
+  // Sync UI with current filters
+  document.querySelectorAll('#filter-year-grid .filter-chip').forEach(c => {
+    c.classList.toggle('active', c.getAttribute('onclick')?.includes(`'${filterState.year}'`));
+  });
+  document.getElementById('filter-country-select').value = filterState.country || '';
+
   // Country select
   const countrySelect = document.getElementById('filter-country-select');
   if (countrySelect && countrySelect.options.length > 0) {
@@ -4344,7 +4458,11 @@ function openFilterPanel(type) {
   }).join('');
 }
 
-function closeFilterPanel() {
+function closeFilterPanel(fromPop = false) {
+  if (!fromPop && document.getElementById('filter-panel-modal').classList.contains('open')) {
+    history.back();
+    return;
+  }
   document.getElementById('filter-panel-modal').classList.remove('open');
   document.body.style.overflow = '';
 }
@@ -4387,8 +4505,24 @@ function resetFilterPanel() {
 
 async function applyFilterPanel() {
   const type = filterState.type;
+
+  // Ying: Simpan filter secara permanen ke section-nya masing-masing
+  let target;
+  if (type === 'film') target = state.filmData;
+  else if (type === 'series') target = state.seriesData;
+  else if (type === 'tv') target = state.tvData;
+
+  if (target) {
+    target.filters = {
+      genre: filterState.genre,
+      country: document.getElementById('filter-country-select').value,
+      year: filterState.year
+    };
+  }
+
   if (type === 'film') await loadFilmGrid(true);
-  else await loadSeriesGrid(true);
+  else if (type === 'series') await loadSeriesGrid(true);
+  else if (type === 'tv') await loadTvPage(true);
 
   closeFilterPanel();
 }
@@ -4422,23 +4556,32 @@ async function loadFilmGrid(reset = true) {
              state.filmData.sort === 'new' ? 'primary_release_date.desc' : 'original_title.asc'
   };
 
-  // Gabungkan dengan filter dari Discovery jika ada
-  if (filterState.type === 'film') {
-    if (filterState.genre) params.with_genres = filterState.genre;
-    if (filterState.country) params.with_origin_country = filterState.country;
-    if (filterState.year) {
-      if (filterState.year.includes('-')) {
-        const [start, end] = filterState.year.split('-');
-        params['primary_release_date.gte'] = `${start}-01-01`;
-        params['primary_release_date.lte'] = `${end}-12-31`;
-      } else {
-        params['primary_release_year'] = filterState.year;
-      }
+  // Ying: Pake filter yang kesimpen di state, bukan global UI state
+  const f = state.filmData.filters;
+  if (f.genre) params.with_genres = f.genre;
+  if (f.country) params.with_origin_country = f.country;
+  if (f.year) {
+    if (f.year.includes('-')) {
+      const [start, end] = f.year.split('-');
+      params['primary_release_date.gte'] = `${start}-01-01`;
+      params['primary_release_date.lte'] = `${end}-12-31`;
+    } else {
+      params['primary_release_year'] = f.year;
     }
   }
 
   const data = await tmdb('/discover/movie', params);
-  const items = data?.results || [];
+  const items = (data?.results || []).filter(item => item.poster_path);
+
+  if (reset && items.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:40px 0;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <h3>Konten tidak ditemukan</h3>
+      <p>Mungkin belum ada rilis untuk filter ini.</p>
+    </div>`;
+    return;
+  }
+
   state.filmData.items.push(...items);
   appendToGrid('film-grid', items, 'movie');
 }
@@ -4458,22 +4601,31 @@ async function loadSeriesGrid(reset = true) {
              state.seriesData.sort === 'new' ? 'first_air_date.desc' : 'original_name.asc'
   };
 
-  if (filterState.type === 'series') {
-    if (filterState.genre) params.with_genres = filterState.genre;
-    if (filterState.country) params.with_origin_country = filterState.country;
-    if (filterState.year) {
-      if (filterState.year.includes('-')) {
-        const [start, end] = filterState.year.split('-');
-        params['first_air_date.gte'] = `${start}-01-01`;
-        params['first_air_date.lte'] = `${end}-12-31`;
-      } else {
-        params['first_air_date_year'] = filterState.year;
-      }
+  // Ying: Pake filter yang kesimpen di state, jangan kecampur
+  const f = state.seriesData.filters;
+  if (f.genre) params.with_genres = f.genre;
+  if (f.country) params.with_origin_country = f.country;
+  if (f.year) {
+    if (f.year.includes('-')) {
+      const [start, end] = f.year.split('-');
+      params['first_air_date.gte'] = `${start}-01-01`;
+      params['first_air_date.lte'] = `${end}-12-31`;
+    } else {
+      params['first_air_date_year'] = f.year;
     }
   }
 
   const data = await tmdb('/discover/tv', params);
-  const items = data?.results || [];
+  const items = (data?.results || []).filter(item => item.poster_path);
+
+  if (reset && items.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:40px 0;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <h3>Konten tidak ditemukan</h3>
+      <p>Mungkin belum ada rilis untuk filter ini.</p>
+    </div>`;
+    return;
+  }
   state.seriesData.items.push(...items);
   appendToGrid('series-grid', items, 'tv');
 }
@@ -4512,8 +4664,9 @@ function renderFilterBar(barId, genres, section) {
 function filterGrid(section, genreId, btn) {
   document.querySelectorAll(`#${section}-filter-bar .filter-btn`).forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if (section === 'film') { state.filmData.genre = genreId; loadFilmGrid(true); }
-  else { state.seriesData.genre = genreId; loadSeriesGrid(true); }
+  if (section === 'film') { state.filmData.filters.genre = genreId; loadFilmGrid(true); }
+  else if (section === 'series') { state.seriesData.filters.genre = genreId; loadSeriesGrid(true); }
+  else if (section === 'tv') { state.tvData.filters.genre = genreId; loadTvPage(true); }
 }
 
 function sortGrid(section) {
@@ -4548,6 +4701,7 @@ function initViewAllInfiniteScroll() {
 }
 
 async function openViewAll(title, type, path, params={}) {
+  pushState();
   state.viewAll = {items:[],filtered:[],page:0,perPage:18,title,type,path,params,genre:null,sort:'pop'};
   document.getElementById('view-all-title').textContent = title;
   document.getElementById('view-all-grid').innerHTML = '';
@@ -4618,7 +4772,11 @@ function sortViewAll() {
 
 function loadMoreViewAll() { loadViewAllPage(); }
 
-function closeViewAll() {
+function closeViewAll(fromPop = false) {
+  if (!fromPop && document.getElementById('view-all-page').classList.contains('active')) {
+    history.back();
+    return;
+  }
   document.getElementById('view-all-page').classList.remove('active');
 }
 
@@ -4626,6 +4784,7 @@ function closeViewAll() {
 // DETAIL MODAL
 // ============================================================
 async function openDetail(id, type) {
+  pushState();
   console.log('[ABCxWipe] Sat-Set Detail Mode active:', type, id);
 
   const prevCtrl = window._detailAbortCtrl;
@@ -4680,24 +4839,27 @@ async function openDetail(id, type) {
     posterEl.className = '';
     posterEl.setAttribute('fetchpriority', 'high'); // Turbo download!
 
+    const lang = state.settings.language || 'id-ID';
+    const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
+
     document.getElementById('detail-title').textContent = title;
     document.getElementById('detail-meta').innerHTML = `
       <span class="detail-meta-tag rating">⭐ ${(detail.vote_average||0).toFixed(1)}</span>
       <span class="detail-meta-tag year">${year}</span>
-      <span class="detail-meta-tag">${type==='tv'?'Series':'Film'}</span>
+      <span class="detail-meta-tag">${type==='tv'?t.series:t.film}</span>
     `;
-    document.getElementById('detail-genres').innerHTML = (detail.genres||[]).map(g=>`<span class="genre-tag">${g.name}</span>`).join('');
-    document.getElementById('detail-overview').textContent = detail.overview || 'Sinopsis tidak tersedia.';
+    document.getElementById('detail-genres').innerHTML = (detail.genres||[]).map(g=>`<span class="genre-tag">${t['g'+g.id]||g.name}</span>`).join('');
+    document.getElementById('detail-overview').textContent = detail.overview || t.noSinopsis;
 
     // Action buttons & Server List (Harus cepet muncul)
     const wl = JSON.parse(localStorage.getItem('abcx_watchlist')||'[]');
     const isSaved = wl.some(w => w.id===id && w.type===type);
     document.getElementById('detail-action-btns').innerHTML = `
-      <button class="detail-action-btn primary" onclick="openPlayer(${id},'${type}','${title.replace(/'/g,"\\'")}')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>Tonton
+      <button class="detail-action-btn primary" id="btn-detail-watch" onclick="openPlayer(${id},'${type}','${title.replace(/'/g,"\\'")}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>${t.watch}
       </button>
       <button class="detail-action-btn secondary ${isSaved?'saved':''}" id="watchlist-btn" onclick="toggleWatchlist(${id},'${type}','${title.replace(/'/g,"\\'")}','${poster}')">
-        ${isSaved?'Tersimpan':'Simpan'}
+        ${isSaved?t.saved:t.save}
       </button>`;
 
     renderServerList(id, type);
@@ -4723,19 +4885,26 @@ async function openDetail(id, type) {
       tmdb(`/${type}/${id}/videos`, {}, abortSignal),
       tmdb(`/${type}/${id}/images`, {include_image_language:'en,null'}, abortSignal),
       tmdb(`/${type}/${id}/recommendations`, {}, abortSignal)
-    ]).then(([credits, videos, images, recs]) => {
+    ]).then(async ([credits, videos, images, recs]) => {
       if (abortSignal.aborted || window._currentDetailRequest !== requestId) return;
 
+      let finalVideos = videos?.results || [];
+      // Ying: Kalau di bahasa pilihanmu gak ada trailer, Ying cariin yang bahasa Inggris sayang
+      if (finalVideos.length === 0 && lang !== 'en-US') {
+        const engVideos = await tmdb(`/${type}/${id}/videos`, {language:'en-US'}, abortSignal);
+        finalVideos = engVideos?.results || [];
+      }
+
       window._detailCredits = credits;
-      window._detailVideos = videos?.results || [];
+      window._detailVideos = finalVideos;
       window._detailId = id; window._detailType = type;
 
       // Render info tambahan yang tadinya skeleton
       const extraItems = [
-        {label:'Studio', value: (detail.production_companies||[]).slice(0,1).map(c=>c.name).join('')||'-'},
-        {label:'Negara', value: (detail.production_countries||[]).slice(0,1).map(c=>c.name).join('')||'-'},
-        {label:'Bahasa', value: detail.original_language?.toUpperCase()||'-'},
-        {label:'Budget', value: detail.budget ? '$'+(detail.budget/1000000).toFixed(1)+'M' : '-'}
+        {label:t.fStudio, value: (detail.production_companies||[]).slice(0,1).map(c=>c.name).join('')||'-'},
+        {label:t.fCountry, value: (detail.production_countries||[]).slice(0,1).map(c=>c.name).join('')||'-'},
+        {label:t.fLang, value: detail.original_language?.toUpperCase()||'-'},
+        {label:t.fBudget, value: detail.budget ? '$'+(detail.budget/1000000).toFixed(1)+'M' : '-'}
       ];
       document.getElementById('detail-extra-info').innerHTML = extraItems.map(i=>`
         <div class="detail-info-item"><div class="detail-info-label">${i.label}</div><div class="detail-info-value">${i.value}</div></div>`).join('');
@@ -4832,7 +5001,11 @@ function makePipDraggable(el) {
   handle.ontouchend = () => { isDragging = false; };
 }
 
-function closeDetail() {
+function closeDetail(fromPop = false) {
+  if (!fromPop && document.getElementById('detail-modal').classList.contains('open')) {
+    history.back();
+    return;
+  }
   // Check if player was active — show PiP if so
   const playerIframe = document.getElementById('player-iframe');
   const playerModal = document.getElementById('player-modal');
@@ -4894,14 +5067,16 @@ async function renderTabTrailer() {
   const videos = window._detailVideos || [];
   const wrap = document.getElementById('detail-trailer-wrap');
   const allWrap = document.getElementById('detail-all-videos');
-  
+  const lang = state.settings.language || 'id-ID';
+  const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
+
   const trailers = videos.filter(v => v.site === 'YouTube' && v.type === 'Trailer');
   const teasers = videos.filter(v => v.site === 'YouTube' && v.type === 'Teaser');
   const others = videos.filter(v => v.site === 'YouTube' && v.type !== 'Trailer' && v.type !== 'Teaser');
   const allVids = [...trailers, ...teasers, ...others];
   
   if (allVids.length === 0) {
-    wrap.innerHTML = `<div class="tab-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Trailer tidak tersedia untuk konten ini.</div>`;
+    wrap.innerHTML = `<div class="tab-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>${t.emptyTrailer}</div>`;
     allWrap.innerHTML = '';
     return;
   }
@@ -4932,7 +5107,9 @@ async function renderTabCast(id, type) {
   const castWrap = document.getElementById('detail-cast-scroll');
   const crewWrap = document.getElementById('detail-crew-list');
   const credits = window._detailCredits;
-  
+  const lang = state.settings.language || 'id-ID';
+  const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
+
   castWrap.innerHTML = `<div class="tab-loading"><div class="spinner"></div>Memuat pemeran...</div>`;
   crewWrap.innerHTML = '';
   
@@ -4940,7 +5117,7 @@ async function renderTabCast(id, type) {
   const crew = (credits?.crew || []);
   
   if (cast.length === 0) {
-    castWrap.innerHTML = `<div class="tab-empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Data pemeran tidak tersedia.</div>`;
+    castWrap.innerHTML = `<div class="tab-empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>${t.emptyCast}</div>`;
   } else {
     castWrap.innerHTML = cast.slice(0, 20).map(c => {
       const photo = c.profile_path ? 'https://image.tmdb.org/t/p/w185'+c.profile_path : 'https://via.placeholder.com/64x96/111118/00f5ff?text=?';
@@ -4973,13 +5150,15 @@ async function renderTabCast(id, type) {
 // ---- TAB: REVIEWS ----
 async function renderTabReviews(id, type) {
   const wrap = document.getElementById('tab-reviews');
+  const lang = state.settings.language || 'id-ID';
+  const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   wrap.innerHTML = `<div class="tab-loading"><div class="spinner"></div>Memuat ulasan...</div>`;
   
   const data = await tmdb(`/${type}/${id}/reviews`);
   const reviews = data?.results || [];
   
   if (reviews.length === 0) {
-    wrap.innerHTML = `<div class="tab-empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Belum ada ulasan untuk konten ini.</div>`;
+    wrap.innerHTML = `<div class="tab-empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>${t.emptyReviews}</div>`;
     return;
   }
   
@@ -5021,6 +5200,8 @@ function toggleReview(idx) {
 // ---- TAB: SIMILAR ----
 async function renderTabSimilar(id, type) {
   const grid = document.getElementById('detail-similar-grid');
+  const lang = state.settings.language || 'id-ID';
+  const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   grid.innerHTML = `<div class="tab-loading"><div class="spinner"></div>Memuat rekomendasi...</div>`;
   
   const [similar, recs] = await Promise.all([
@@ -5034,7 +5215,7 @@ async function renderTabSimilar(id, type) {
   const unique = items.filter(i => { if(seen.has(i.id)) return false; seen.add(i.id); return true; }).slice(0, 18);
   
   if (unique.length === 0) {
-    grid.innerHTML = `<div class="tab-empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8"/></svg>Tidak ada rekomendasi serupa.</div>`;
+    grid.innerHTML = `<div class="tab-empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8"/></svg>${t.emptySimilar}</div>`;
     return;
   }
   
@@ -5100,6 +5281,7 @@ async function loadEpisodes() {
 // PLAYER
 // ============================================================
 function openPlayer(id, type, title='', season=1, episode=1, serverIdx) {
+  pushState();
   if (serverIdx === undefined) {
     serverIdx = parseInt(state.settings.defaultServer || 0);
   }
@@ -5272,7 +5454,11 @@ function tryNextServer() {
   loadPlayerServer(next);
 }
 
-function closePlayer() {
+function closePlayer(fromPop = false) {
+  if (!fromPop && document.getElementById('player-modal').classList.contains('open')) {
+    history.back();
+    return;
+  }
   if (window._stopFocusGuard) window._stopFocusGuard();
   document.getElementById('player-modal').classList.remove('open');
   document.getElementById('player-iframe').src = '';
@@ -5574,6 +5760,7 @@ const sfpState = {
 };
 
 async function openSearchFullpage(q) {
+  pushState();
   sfpState.query = q;
   sfpState.page = 1;
   sfpState.allItems = [];
@@ -5593,7 +5780,11 @@ async function openSearchFullpage(q) {
   await sfpFetch();
 }
 
-function closeSearchFullpage() {
+function closeSearchFullpage(fromPop = false) {
+  if (!fromPop && document.getElementById('search-fullpage').classList.contains('open')) {
+    history.back();
+    return;
+  }
   document.getElementById('search-fullpage').classList.remove('open');
   document.body.style.overflow = '';
 }
@@ -5860,12 +6051,17 @@ window._apiCallCount = 0;
 const _origTmdb = window.tmdb;
 
 function openSettings() {
+  pushState();
   document.getElementById('settings-modal').classList.add('open');
   document.body.style.overflow = 'hidden'; // Lock scroll
   renderSettingsContent('tampilan');
 }
 
-function closeSettings() {
+function closeSettings(fromPop = false) {
+  if (!fromPop && document.getElementById('settings-modal').classList.contains('open')) {
+    history.back();
+    return;
+  }
   document.getElementById('settings-modal').classList.remove('open');
   document.body.style.overflow = ''; // Unlock scroll
 }
@@ -6173,6 +6369,11 @@ const UI_LANGS = {
     hTotal:'Total Ditonton', hHours:'Jam Menonton', hToday:'Hari Ini', hFav:'Genre Favorit',
     hSub1:'film & series', hSub2:'estimasi total', hSub3:'ditonton hari ini', hSub4:'paling sering',
     hActivity:'Aktivitas 7 Hari Terakhir', hTopGenre:'Top Genre', hClear:'Hapus Semua Riwayat',
+    tvAiring:'Tayang Hari Ini', tvOnAir:'Sedang Tayang', tvPopular:'Populer', tvTopRated:'Top Rated',
+    tOverview:'Sinopsis', tEpisodes:'Episode', tTrailer:'Trailer', tCast:'Pemeran', tReviews:'Ulasan', tSimilar:'Serupa',
+    sServer:'Server Streaming', sGallery:'Galeri Screenshot', sCast:'Pemeran Utama', sCrew:'Kru Utama',
+    fStudio:'Studio', fCountry:'Negara', fLang:'Bahasa', fBudget:'Anggaran',
+    emptyTrailer:'Trailer tidak tersedia untuk konten ini.', emptyCast:'Data pemeran tidak tersedia.', emptyReviews:'Belum ada ulasan untuk konten ini.', emptySimilar:'Tidak ada rekomendasi serupa.',
     sTitle:'Pengaturan', sTampilan:'Tampilan', sPlayer:'Player', sAdblock:'Anti-Iklan', sData:'Data', sNotif:'Notifikasi', sDev:'Developer', sCache:'Cache', sAbout:'Tentang',
     sLang:'Bahasa TMDB', sLangDesc:'Ganti bahasa metadata film (judul, sinopsis)', sDark:'Tema Gelap', sDarkDesc:'Selalu aktif (cyberpunk mode)', sPart:'Efek Partikel', sPartDesc:'Animasi partikel di background', sScan:'Efek Scanline', sScanDesc:'Garis scanline cyberpunk', sAnim:'Animasi Smooth', sAnimDesc:'Transisi dan animasi halus',
     sAuto:'Auto-play Berikutnya', sAutoDesc:'Otomatis putar episode berikutnya', sSrv:'Server Default', sSrvDesc:'Server yang digunakan pertama kali',
@@ -6196,6 +6397,11 @@ const UI_LANGS = {
     hTotal:'Total Watched', hHours:'Watch Time', hToday:'Today', hFav:'Top Genre',
     hSub1:'movies & series', hSub2:'total estimate', hSub3:'watched today', hSub4:'most frequent',
     hActivity:'Activity Last 7 Days', hTopGenre:'Top Genres', hClear:'Clear All History',
+    tvAiring:'Airing Today', tvOnAir:'On The Air', tvPopular:'Popular', tvTopRated:'Top Rated',
+    tOverview:'Overview', tEpisodes:'Episodes', tTrailer:'Trailer', tCast:'Cast', tReviews:'Reviews', tSimilar:'Similar',
+    sServer:'Streaming Servers', sGallery:'Gallery Screenshots', sCast:'Main Cast', sCrew:'Main Crew',
+    fStudio:'Studio', fCountry:'Country', fLang:'Language', fBudget:'Budget',
+    emptyTrailer:'Trailer not available for this content.', emptyCast:'Cast data not available.', emptyReviews:'No reviews yet for this content.', emptySimilar:'No similar recommendations.',
     sTitle:'Settings', sTampilan:'Appearance', sPlayer:'Player', sAdblock:'Anti-Ad', sData:'Data', sNotif:'Notifications', sDev:'Developer', sCache:'Cache', sAbout:'About',
     sLang:'TMDB Language', sLangDesc:'Change movie metadata language (title, synopsis)', sDark:'Dark Theme', sDarkDesc:'Always active (cyberpunk mode)', sPart:'Particle Effects', sPartDesc:'Background particle animations', sScan:'Scanline Effect', sScanDesc:'Cyberpunk scanline lines', sAnim:'Smooth Animation', sAnimDesc:'Smooth transitions and animations',
     sAuto:'Next Auto-play', sAutoDesc:'Automatically play next episode', sSrv:'Default Server', sSrvDesc:'Server used first time',
@@ -6218,7 +6424,13 @@ const UI_LANGS = {
     pop:'人気', rating:'評価', new:'最新', az:'A-Z',
     hTotal:'合計視聴数', hHours:'合計時間', hToday:'今日', hFav:'ジャンル',
     hSub1:'作品', hSub2:'推定合計', hSub3:'今日の視聴', hSub4:'頻度',
-    hActivity:'直近7日間の活動', hTopGenre:'トップジャンル', sTitle:'設定', sTampilan:'表示', sPlayer:'プレイヤー', sAdblock:'広告ブロック', sData:'データ', sNotif:'通知', sDev:'開発者', sCache:'キャッシュ', sAbout:'詳細',
+    hActivity:'直近7日間の活動', hTopGenre:'トップジャンル',
+    tvAiring:'今日の放送', tvOnAir:'現在放送中', tvPopular:'人気', tvTopRated:'高評価',
+    tOverview:'概要', tEpisodes:'エピソード', tTrailer:'予告編', tCast:'キャスト', tReviews:'レビュー', tSimilar:'似ている作品',
+    sServer:'配信サーバー', sGallery:'スクリーンショット', sCast:'主要キャスト', sCrew:'主要スタッフ',
+    fStudio:'スタジオ', fCountry:'国', fLang:'言語', fBudget:'予算',
+    emptyTrailer:'このコンテンツの予告編はありません。', emptyCast:'キャスト情報がありません。', emptyReviews:'レビューはまだありません。', emptySimilar:'似たようなおすすめはありません。',
+    sTitle:'設定', sTampilan:'表示', sPlayer:'プレイヤー', sAdblock:'広告ブロック', sData:'データ', sNotif:'通知', sDev:'開発者', sCache:'キャッシュ', sAbout:'詳細',
     sLang:'TMDB言語', sLangDesc:'メタデータの言語を変更', sDark:'ダークテーマ', sDarkDesc:'常に有効', sPart:'パーティクル', sPartDesc:'背景アニメーション', sScan:'スキャンライン', sScanDesc:'サイバーパンク効果', sAnim:'スムーズアニメ', sAnimDesc:'滑らかな遷移',
     sAuto:'自動再生', sAutoDesc:'次のエピソードを再生', sSrv:'デフォルトサーバ', sSrvDesc:'優先サーバ',
     sClearH:'履歴削除', sClearHDesc:'視聴履歴をすべて削除', sClearW:'リスト削除', sClearWDesc:'保存した作品を削除', sReset:'全データリセット', sResetDesc:'ローカルデータを削除', sDel:'削除',
@@ -6241,6 +6453,11 @@ const UI_LANGS = {
     hTotal:'총 시청 수', hHours:'시청 시간', hToday:'오늘', hFav:'장르',
     hSub1:'영화 & 시리즈', hSub2:'총 예상', hSub3:'오늘 시청', hSub4:'자주 시청',
     hActivity:'최근 7일 활동', hTopGenre:'인기 장르', hClear:'모든 기록 삭제',
+    tvAiring:'오늘 방영', tvOnAir:'현재 방영 중', tvPopular:'인기', tvTopRated:'높은 평점',
+    tOverview:'개요', tEpisodes:'에피소드', tTrailer:'예고편', tCast:'출연진', tReviews:'리뷰', tSimilar:'비슷한 콘텐츠',
+    sServer:'스트리밍 서버', sGallery:'스크린샷 갤러리', sCast:'주요 출연진', sCrew:'주요 제작진',
+    fStudio:'제작사', fCountry:'국가', fLang:'언어', fBudget:'예산',
+    emptyTrailer:'이 콘텐츠의 예고편이 없습니다.', emptyCast:'출연진 정보가 없습니다.', emptyReviews:'리뷰가 없습니다.', emptySimilar:'비슷한 추천 콘텐츠가 없습니다.',
     sTitle:'설정', sTampilan:'화면', sPlayer:'플레이어', sAdblock:'광고 차단', sData:'데이터', sNotif:'알림', sDev:'개발자', sCache:'캐시', sAbout:'정보',
     sLang:'TMDB 언어', sLangDesc:'메타데이터 언어 변경', sDark:'다크 모드', sDarkDesc:'항상 활성화', sPart:'파티클 효과', sPartDesc:'배경 애니메이션', sScan:'스캔라인', sScanDesc:'사이버펑크 효과', sAnim:'부드러운 애니메이션', sAnimDesc:'부드러운 화면 전환',
     sAuto:'자동 재생', sAutoDesc:'다음 에피소드 자동 재생', sSrv:'기본 서버', sSrvDesc:'기본 스트리밍 서버',
@@ -6264,6 +6481,11 @@ const UI_LANGS = {
     hTotal:'总观看数', hHours:'观看时长', hToday:'今日观看', hFav:'最爱类型',
     hSub1:'电影 & 剧集', hSub2:'预估总时长', hSub3:'今日已看', hSub4:'最常观看',
     hActivity:'最近7天活动', hTopGenre:'热门类型', hClear:'清除所有历史',
+    tvAiring:'今日播出', tvOnAir:'正在播出', tvPopular:'热门', tvTopRated:'高分',
+    tOverview:'剧情简介', tEpisodes:'剧集列表', tTrailer:'预告片', tCast:'演员阵容', tReviews:'用户评价', tSimilar:'相似推荐',
+    sServer:'线路选择', sGallery:'剧照图库', sCast:'主要演员', sCrew:'制作团队',
+    fStudio:'制作公司', fCountry:'制片国家', fLang:'语言', fBudget:'预算',
+    emptyTrailer:'暂无预告片。', emptyCast:'暂无演员信息。', emptyReviews:'暂无评价。', emptySimilar:'暂无相似推荐。',
     sTitle:'设置', sTampilan:'外观', sPlayer:'播放器', sAdblock:'广告拦截', sData:'数据', sNotif:'通知', sDev:'开发者', sCache:'缓存', sAbout:'关于',
     sLang:'TMDB语言', sLangDesc:'更改电影元数据语言（标题、简介）', sDark:'深色模式', sDarkDesc:'始终开启（赛博朋克模式）', sPart:'粒子效果', sPartDesc:'背景粒子动画', sScan:'扫描线效果', sScanDesc:'赛博朋克扫描线', sAnim:'平滑动画', sAnimDesc:'平滑的界面过渡',
     sAuto:'自动播放下一集', sAutoDesc:'自动播放下一集内容', sSrv:'默认服务器', sSrvDesc:'优先使用的播放服务器',
@@ -6287,6 +6509,11 @@ const UI_LANGS = {
     hTotal:'总观看数', hHours:'观看时长', hToday:'今日观看', hFav:'最爱类型',
     hSub1:'电影 & 剧集', hSub2:'预估总时长', hSub3:'今日已看', hSub4:'最常观看',
     hActivity:'最近7天活动', hTopGenre:'热门类型', hClear:'清除所有历史',
+    tvAiring:'今日播出', tvOnAir:'正在播出', tvPopular:'热门', tvTopRated:'高分',
+    tOverview:'剧情简介', tEpisodes:'剧集列表', tTrailer:'预告片', tCast:'演员阵容', tReviews:'用户评价', tSimilar:'相似推荐',
+    sServer:'线路选择', sGallery:'剧照图库', sCast:'主要演员', sCrew:'制作团队',
+    fStudio:'制作公司', fCountry:'制片国家', fLang:'语言', fBudget:'预算',
+    emptyTrailer:'暂无预告片。', emptyCast:'暂无演员信息。', emptyReviews:'暂无评价。', emptySimilar:'暂无相似推荐。',
     sTitle:'设置', sTampilan:'外观', sPlayer:'播放器', sAdblock:'广告拦截', sData:'数据', sNotif:'通知', sDev:'开发者', sCache:'缓存', sAbout:'关于',
     sLang:'TMDB语言', sLangDesc:'更改电影元数据语言（标题、简介）', sDark:'深色模式', sDarkDesc:'始终开启（赛博朋克模式）', sPart:'粒子效果', sPartDesc:'背景粒子动画', sScan:'扫描线效果', sScanDesc:'赛博朋克扫描线', sAnim:'平滑动画', sAnimDesc:'平滑的界面过渡',
     sAuto:'自动播放下一集', sAutoDesc:'自动播放下一集内容', sSrv:'默认服务器', sSrvDesc:'优先使用的播放服务器',
@@ -6305,7 +6532,7 @@ function applyUiTranslations() {
 
   const mapping = {
     'pcnav-home': t.home, 'pcnav-film': t.film, 'pcnav-series': t.series, 'pcnav-tv': t.tv, 'pcnav-history': t.history, 'pcnav-watchlist': t.save,
-    'bnav-home': t.home, 'bnav-film': t.film, 'bnav-series': t.series, 'bnav-history': t.history, 'bnav-watchlist': t.save,
+    'bnav-home': t.home, 'bnav-film': t.film, 'bnav-series': t.series, 'bnav-tv': t.tv, 'bnav-history': t.history, 'bnav-watchlist': t.save,
     'lbl-stat-watched': t.watched, 'lbl-stat-saved': t.saved, 'lbl-stat-hours': t.hours, 'lbl-stat-genre': t.favGenre,
     'lbl-continue-watch': t.continue, 'hdr-film': t.film, 'hdr-series': t.series, 'hdr-tv': t.tv, 'hdr-history': t.history, 'hdr-watchlist': t.save,
     'opt-film-pop': t.pop, 'opt-film-rating': t.rating, 'opt-film-new': t.new, 'opt-film-az': t.az,
@@ -6313,7 +6540,12 @@ function applyUiTranslations() {
     'btn-film-load': t.loadMore, 'btn-series-load': t.loadMore,
     'lbl-hstat-total': t.hTotal, 'lbl-hstat-hours': t.hHours, 'lbl-hstat-today': t.hToday, 'lbl-hstat-genre': t.hFav,
     'lbl-hstat-sub1': t.hSub1, 'lbl-hstat-sub2': t.hSub2, 'lbl-hstat-sub3': t.hSub3, 'lbl-hstat-sub4': t.hSub4,
-    'lbl-chart-activity': t.hActivity, 'lbl-chart-genre': t.hTopGenre, 'btn-history-clear': t.hClear
+    'lbl-chart-activity': t.hActivity, 'lbl-chart-genre': t.hTopGenre, 'btn-history-clear': t.hClear,
+    'btn-hero-watch': t.watch, 'btn-hero-info': t.detail,
+    'tab-btn-overview': t.tOverview, 'tab-btn-episodes': t.tEpisodes, 'tab-btn-trailer': t.tTrailer, 'tab-btn-cast': t.tCast, 'tab-btn-reviews': t.tReviews, 'tab-btn-similar': t.tSimilar,
+    'lbl-detail-server': t.sServer, 'lbl-detail-gallery': t.sGallery, 'lbl-detail-cast': t.sCast, 'lbl-detail-crew': t.sCrew,
+    'tv-tab-airing': t.tvAiring, 'tv-tab-onair': t.tvOnAir, 'tv-tab-popular': t.tvPopular, 'tv-tab-toprated': t.tvTopRated, 'tv-load-more': t.loadMore,
+    'sfp-loadmore-btn': t.loadMore
   };
 
   Object.entries(mapping).forEach(([id, text]) => {
