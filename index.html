@@ -4286,18 +4286,62 @@ let filterState = {
 };
 
 function openFilterPanel(type) {
+  const lang = state.settings.language || 'id-ID';
+  const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   filterState.type = type;
   document.getElementById('filter-panel-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Render genre based on type
+  // Translate modal labels
+  document.querySelector('#filter-panel-inner h3').textContent = t.fTitle || 'ADVANCED DISCOVERY';
+  const groupTitles = document.querySelectorAll('.filter-group-title');
+  if (groupTitles.length >= 4) {
+    groupTitles[0].textContent = t.fKoleksi || 'Koleksi Terpilih';
+    groupTitles[1].textContent = t.fGenre || 'Genre Kategori';
+    groupTitles[2].textContent = t.fTahun || 'Tahun Rilis';
+    groupTitles[3].textContent = t.fNegara || 'Negara Asal';
+  }
+
+  // Presets
+  const presets = document.querySelectorAll('#filter-moods .filter-chip');
+  if (presets.length >= 6) {
+    presets[0].textContent = t.gHorror;
+    presets[1].textContent = t.gRomance;
+    presets[2].textContent = t.gAction;
+    presets[3].textContent = t.gComedy;
+    presets[4].textContent = t.gKDrama;
+    presets[5].textContent = t.gAnimation;
+  }
+
+  // Year labels
+  const yearChips = document.querySelectorAll('#filter-year-grid .filter-chip');
+  if (yearChips.length >= 11) {
+    yearChips[9].textContent = t.fLegend || 'Legenda';
+    yearChips[10].textContent = t.fVintage || 'Vintage';
+  }
+
+  // Country select
+  const countrySelect = document.getElementById('filter-country-select');
+  if (countrySelect && countrySelect.options.length > 0) {
+    countrySelect.options[0].textContent = t.fAllCountries || 'Semua Negara';
+  }
+
+  // Actions
+  const actions = document.querySelectorAll('.filter-actions button');
+  if (actions.length >= 2) {
+    actions[0].textContent = t.fReset || 'Reset';
+    actions[1].textContent = t.fApply || 'Terapkan Filter';
+  }
+
+  // Render genre based on type with translations
   const genres = type === 'film' ? GENRES_MOVIE : GENRES_TV;
   const grid = document.getElementById('filter-genre-grid');
-  grid.innerHTML = genres.map(g => `
-    <div class="filter-chip ${filterState.genre == g.id ? 'active' : ''}" data-id="${g.id}" onclick="setFilterGenre(${g.id}, this)">
-      ${g.name}
-    </div>
-  `).join('');
+  grid.innerHTML = genres.map(g => {
+    const genreName = t['g' + g.id] || g.name;
+    return `<div class="filter-chip ${filterState.genre == g.id ? 'active' : ''}" data-id="${g.id}" onclick="setFilterGenre(${g.id}, this)">
+      ${genreName}
+    </div>`;
+  }).join('');
 }
 
 function closeFilterPanel() {
@@ -6137,7 +6181,11 @@ const UI_LANGS = {
     sDevMode:'Mode Developer', sDevModeDesc:'Tampilkan info debug dan performa', sConsole:'Console Log Overlay', sConsoleDesc:'Tampilkan log di layar', sApi:'API Call Counter', sApiDesc:'Hitung jumlah request ke TMDB API', sVer:'Versi File', sVerDesc:'Info build saat ini',
     sMem:'Memory Cache', sMemDesc:'Data API yang tersimpan sementara (cepat)', sStorage:'Ukuran Storage', sStorageDesc:'Gambar & data yang tersimpan di disk', sClearS:'Hapus Cache Storage', sClearSDesc:'Hapus cache gambar (offline support)', sExport:'Export Data', sExportDesc:'Unduh semua data sebagai JSON', sImport:'Import Data', sImportDesc:'Pulihkan data dari file JSON',
     sAboutDesc:'Platform streaming film & series<br>Powered by TMDB API<br>Anti-Iklan & Anti-Redirect built-in<br>PWA Support (Install ke Home Screen)<br><br><span style="color:var(--text4);">Data film dari The Movie Database (TMDB)</span>',
-    abTotal:'Total Diblokir', abSession:'Sesi Ini', abDomain:'Domain Diblokir', abActive:'Nuclear Anti-Ad v2.0 Aktif', abDesc:'window.open blocked • visibilitychange refocus • click interceptor • DOM cleaner • periodic cleanup setiap 5 detik', abAdd:'Tambah Domain Custom', abList:'Daftar Domain Diblokir', abPlaceholder:'contoh: badads.com', abBtnAdd:'+ Tambah', abReset:'Reset Counter', abClear:'Hapus Custom'
+    abTotal:'Total Diblokir', abSession:'Sesi Ini', abDomain:'Domain Diblokir', abActive:'Nuclear Anti-Ad v2.0 Aktif', abDesc:'window.open blocked • visibilitychange refocus • click interceptor • DOM cleaner • periodic cleanup setiap 5 detik', abAdd:'Tambah Domain Custom', abList:'Daftar Domain Diblokir', abPlaceholder:'contoh: badads.com', abBtnAdd:'+ Tambah', abReset:'Reset Counter', abClear:'Hapus Custom',
+    fTitle:'DISCOVERY LANJUTAN', fKoleksi:'Koleksi Terpilih', fGenre:'Genre Kategori', fTahun:'Tahun Rilis', fNegara:'Negara Asal', fAllCountries:'Semua Negara', fReset:'Reset', fApply:'Terapkan Filter', fLegend:'Legenda', fVintage:'Vintage',
+    gHorror:'Horror', gRomance:'Romantis', gAction:'Aksi', gComedy:'Komedi', gKDrama:'Drama Korea', gAnimation:'Animasi',
+    g28:'Aksi', g12:'Petualangan', g16:'Animasi', g35:'Komedi', g80:'Kriminal', g99:'Dokumenter', g18:'Drama', g10751:'Keluarga', g14:'Fantasi', g36:'Sejarah', g27:'Horror', g10402:'Musik', g9648:'Misteri', g10749:'Romantis', g878:'Sci-Fi', g53:'Thriller', g10752:'Perang', g37:'Western',
+    g10759:'Aksi & Petualangan', g10762:'Anak-anak', g10763:'Berita', g10764:'Reality', g10765:'Sci-Fi & Fantasi', g10766:'Soap', g10767:'Talk', g10768:'War & Politics'
   },
   'en-US': {
     home:'Home', film:'Movies', series:'Series', tv:'TV Shows', history:'History', save:'Watchlist',
@@ -6156,7 +6204,11 @@ const UI_LANGS = {
     sDevMode:'Developer Mode', sDevModeDesc:'Show debug and performance info', sConsole:'Console Log Overlay', sConsoleDesc:'Show logs on screen', sApi:'API Call Counter', sApiDesc:'Count TMDB API requests', sVer:'File Version', sVerDesc:'Current build info',
     sMem:'Memory Cache', sMemDesc:'Temporary stored API data (fast)', sStorage:'Storage Size', sStorageDesc:'Images & data stored on disk', sClearS:'Clear Storage Cache', sClearSDesc:'Clear image cache (offline support)', sExport:'Export Data', sExportDesc:'Download all data as JSON', sImport:'Import Data', sImportDesc:'Restore data from JSON file',
     sAboutDesc:'Movie & series streaming platform<br>Powered by TMDB API<br>Built-in Anti-Ad & Anti-Redirect<br>PWA Support (Install to Home Screen)<br><br><span style="color:var(--text4);">Movie data from The Movie Database (TMDB)</span>',
-    abTotal:'Total Blocked', abSession:'This Session', abDomain:'Domains Blocked', abActive:'Nuclear Anti-Ad v2.0 Active', abDesc:'window.open blocked • visibilitychange refocus • click interceptor • DOM cleaner • periodic cleanup every 5s', abAdd:'Add Custom Domain', abList:'Blocked Domains List', abPlaceholder:'e.g. badads.com', abBtnAdd:'+ Add', abReset:'Reset Counter', abClear:'Clear Custom'
+    abTotal:'Total Blocked', abSession:'This Session', abDomain:'Domains Blocked', abActive:'Nuclear Anti-Ad v2.0 Active', abDesc:'window.open blocked • visibilitychange refocus • click interceptor • DOM cleaner • periodic cleanup every 5s', abAdd:'Add Custom Domain', abList:'Blocked Domains List', abPlaceholder:'e.g. badads.com', abBtnAdd:'+ Add', abReset:'Reset Counter', abClear:'Clear Custom',
+    fTitle:'ADVANCED DISCOVERY', fKoleksi:'Selected Collections', fGenre:'Genre Categories', fTahun:'Release Year', fNegara:'Country of Origin', fAllCountries:'All Countries', fReset:'Reset', fApply:'Apply Filter', fLegend:'Legends', fVintage:'Vintage',
+    gHorror:'Horror', gRomance:'Romance', gAction:'Action', gComedy:'Comedy', gKDrama:'K-Drama', gAnimation:'Animation',
+    g28:'Action', g12:'Adventure', g16:'Animation', g35:'Comedy', g80:'Crime', g99:'Documentary', g18:'Drama', g10751:'Family', g14:'Fantasy', g36:'History', g27:'Horror', g10402:'Music', g9648:'Mystery', g10749:'Romance', g878:'Sci-Fi', g53:'Thriller', g10752:'War', g37:'Western',
+    g10759:'Action & Adventure', g10762:'Kids', g10763:'News', g10764:'Reality', g10765:'Sci-Fi & Fantasy', g10766:'Soap', g10767:'Talk', g10768:'War & Politics'
   },
   'ja-JP': {
     home:'ホーム', film:'映画', series:'シリーズ', tv:'テレビ', history:'履歴', save:'リスト',
@@ -6174,7 +6226,11 @@ const UI_LANGS = {
     sDevMode:'開発者モード', sDevModeDesc:'デバッグ情報を表示', sConsole:'ログオーバーレイ', sConsoleDesc:'画面にログを表示', sApi:'APIカウンタ', sApiDesc:'リクエスト数をカウント', sVer:'バージョン', sVerDesc:'ビルド情報',
     sMem:'メモリキャッシュ', sMemDesc:'一時データ', sStorage:'ストレージ容量', sStorageDesc:'ディスク使用量', sClearS:'ストレージ削除', sClearSDesc:'画像キャッシュを削除', sExport:'エクスポート', sExportDesc:'JSONで保存', sImport:'インポート', sImportDesc:'JSONから復元',
     sAboutDesc:'映画＆シリーズストリーミング<br>TMDB API搭載<br>広告＆リダイレクト防止<br>PWA対応<br><br><span style="color:var(--text4);">データ提供: The Movie Database (TMDB)</span>', hClear:'履歴を削除',
-    abTotal:'ブロック合計', abSession:'現在のセッション', abDomain:'ブロックされたドメイン', abActive:'Nuclear Anti-Ad v2.0 有効', abDesc:'window.open ブロック • フォーカスガード • クリック監視 • DOMクリーナー • 5秒ごとのクリーンアップ', abAdd:'カスタムドメイン追加', abList:'ブロックリスト', abPlaceholder:'例: badads.com', abBtnAdd:'+ 追加', abReset:'カウンタリセット', abClear:'カスタム削除'
+    abTotal:'ブロック合計', abSession:'現在のセッション', abDomain:'ブロックされたドメイン', abActive:'Nuclear Anti-Ad v2.0 有効', abDesc:'window.open ブロック • フォーカスガード • クリック監視 • DOMクリーナー • 5秒ごとのクリーンアップ', abAdd:'カスタムドメイン追加', abList:'ブロックリスト', abPlaceholder:'例: badads.com', abBtnAdd:'+ 追加', abReset:'カウンタリセット', abClear:'カスタム削除',
+    fTitle:'高度な検索', fKoleksi:'厳選コレクション', fGenre:'カテゴリー', fTahun:'公開年', fNegara:'製作国', fAllCountries:'すべての国', fReset:'リセット', fApply:'適用する', fLegend:'レジェンド', fVintage:'ヴィンテージ',
+    gHorror:'ホラー', gRomance:'恋愛', gAction:'アクション', gComedy:'コメディ', gKDrama:'韓国ドラマ', gAnimation:'アニメーション',
+    g28:'アクション', g12:'アドベンチャー', g16:'アニメーション', g35:'コメディ', g80:'犯罪', g99:'ドキュメンタリー', g18:'ドラマ', g10751:'ファミリー', g14:'ファンタジー', g36:'歴史', g27:'ホラー', g10402:'音楽', g9648:'ミステリー', g10749:'ロマンス', g878:'SF', g53:'スリラー', g10752:'戦争', g37:'西部劇',
+    g10759:'アクション＆アドベンチャー', g10762:'キッズ', g10763:'ニュース', g10764:'リアリティ', g10765:'SF＆ファンタジー', g10766:'ソープ', g10767:'トーク', g10768:'政治・軍事'
   },
   'ko-KR': {
     home:'홈', film:'영화', series:'시리즈', tv:'TV쇼', history:'기록', save:'저장됨',
@@ -6193,7 +6249,34 @@ const UI_LANGS = {
     sDevMode:'개발자 모드', sDevModeDesc:'디버그 정보 표시', sConsole:'로그 오버레이', sConsoleDesc:'화면에 로그 표시', sApi:'API 카운터', sApiDesc:'API 요청 횟수', sVer:'버전 정보', sVerDesc:'현재 빌드 정보',
     sMem:'메모리 캐시', sMemDesc:'임시 저장 데이터', sStorage:'저장 공간', sStorageDesc:'디스크 사용량', sClearS:'스토리지 삭제', sClearSDesc:'이미지 캐시 삭제', sExport:'데이터 내보내기', sExportDesc:'JSON 파일로 저장', sImport:'데이터 가져오기', sImportDesc:'JSON 파일에서 복구',
     sAboutDesc:'영화 및 시리즈 스트리밍 플랫폼<br>TMDB API 지원<br>광고 및 리다이렉트 차단 내장<br>PWA 지원<br><br><span style="color:var(--text4);">데이터 출처: The Movie Database (TMDB)</span>',
-    abTotal:'총 차단 수', abSession:'현재 세션', abDomain:'차단된 도메인', abActive:'Nuclear Anti-Ad v2.0 활성화', abDesc:'window.open 차단 • 포커스 가드 • 클릭 감시 • DOM 클리너 • 5초 간격 정리', abAdd:'커스텀 도메인 추가', abList:'차단 목록', abPlaceholder:'예: badads.com', abBtnAdd:'+ 추가', abReset:'카운터 초기화', abClear:'커스텀 삭제'
+    abTotal:'총 차단 수', abSession:'현재 세션', abDomain:'차단된 도메인', abActive:'Nuclear Anti-Ad v2.0 활성화', abDesc:'window.open 차단 • 포커스 가드 • 클릭 감시 • DOM 클리너 • 5초 간격 정리', abAdd:'커스텀 도메인 추가', abList:'차단 목록', abPlaceholder:'예: badads.com', abBtnAdd:'+ 추가', abReset:'카운터 초기화', abClear:'커스텀 삭제',
+    fTitle:'고급 검색', fKoleksi:'추천 컬렉션', fGenre:'장르 카테고리', fTahun:'출시 연도', fNegara:'제작 국가', fAllCountries:'모든 국가', fReset:'초기화', fApply:'필터 적용', fLegend:'레전드', fVintage:'빈티지',
+    gHorror:'공포', gRomance:'로맨스', gAction:'액션', gComedy:'코미디', gKDrama:'한국 드라마', gAnimation:'애니메이션',
+    g28:'액션', g12:'모험', g16:'애니메이션', g35:'코미디', g80:'범죄', g99:'다큐멘터리', g18:'드라마', g10751:'가족', g14:'판타지', g36:'역사', g27:'공포', g10402:'음악', g9648:'미스터리', g10749:'로맨스', g878:'SF', g53:'스릴러', g10752:'전쟁', g37:'서부',
+    g10759:'액션 & 모험', g10762:'어린이', g10763:'뉴스', g10764:'리얼리티', g10765:'SF & 판타지', g10766:'속보', g10767:'토크', g10768:'군사'
+  },
+  'zh-CN': {
+    home:'首页', film:'电影', series:'剧集', tv:'电视', history:'历史', save:'收藏',
+    search:'搜索电影、剧集...', watch:'立即观看', detail:'详情',
+    watched:'已观看', saved:'已收藏', hours:'观看时长', favGenre:'最爱类型',
+    continue:'继续观看', seeAll:'查看全部', loadMore:'加载更多',
+    pop:'热门', rating:'评分', new:'最新', az:'A-Z',
+    hTotal:'总观看数', hHours:'观看时长', hToday:'今日观看', hFav:'最爱类型',
+    hSub1:'电影 & 剧集', hSub2:'预估总时长', hSub3:'今日已看', hSub4:'最常观看',
+    hActivity:'最近7天活动', hTopGenre:'热门类型', hClear:'清除所有历史',
+    sTitle:'设置', sTampilan:'外观', sPlayer:'播放器', sAdblock:'广告拦截', sData:'数据', sNotif:'通知', sDev:'开发者', sCache:'缓存', sAbout:'关于',
+    sLang:'TMDB语言', sLangDesc:'更改电影元数据语言（标题、简介）', sDark:'深色模式', sDarkDesc:'始终开启（赛博朋克模式）', sPart:'粒子效果', sPartDesc:'背景粒子动画', sScan:'扫描线效果', sScanDesc:'赛博朋克扫描线', sAnim:'平滑动画', sAnimDesc:'平滑的界面过渡',
+    sAuto:'自动播放下一集', sAutoDesc:'自动播放下一集内容', sSrv:'默认服务器', sSrvDesc:'优先使用的播放服务器',
+    sClearH:'清除历史', sClearHDesc:'删除所有观看历史记录', sClearW:'清除收藏', sClearWDesc:'删除所有已收藏的内容', sReset:'重置所有数据', sResetDesc:'删除所有本地数据', sDel:'删除',
+    sNotifAd:'广告拦截通知', sNotifAdDesc:'拦截广告时显示通知', sNotifSys:'系统通知', sNotifSysDesc:'浏览器通知（如果允许）', sNotifSnd:'通知声音', sNotifSndDesc:'显示通知时播放声音',
+    sDevMode:'开发者模式', sDevModeDesc:'显示调试和性能信息', sConsole:'控制台日志叠加', sConsoleDesc:'在屏幕上显示日志', sApi:'API调用计数', sApiDesc:'统计TMDB API请求次数', sVer:'文件版本', sVerDesc:'当前构建信息',
+    sMem:'内存缓存', sMemDesc:'临时存储的API数据（快）', sStorage:'存储占用', sStorageDesc:'磁盘上存储的图片和数据', sClearS:'清除存储缓存', sClearSDesc:'清除图片缓存（离线支持）', sExport:'导出数据', sExportDesc:'将所有数据下载为JSON文件', sImport:'导入数据', sImportDesc:'从JSON文件恢复数据',
+    sAboutDesc:'电影和剧集流媒体平台<br>由TMDB API驱动<br>内置广告和重定向拦截<br>支持PWA（添加到主屏幕）<br><br><span style="color:var(--text4);">电影数据来自 The Movie Database (TMDB)</span>',
+    abTotal:'总拦截数', abSession:'本次会话', abDomain:'已拦截域名', abActive:'Nuclear Anti-Ad v2.0 已激活', abDesc:'拦截 window.open • 焦点保护 • 点击拦截 • DOM清理 • 每5秒自动整理', abAdd:'添加自定义域名', abList:'拦截域名列表', abPlaceholder:'例如: badads.com', abBtnAdd:'+ 添加', abReset:'重置计数器', abClear:'清除自定义',
+    fTitle:'高级发现', fKoleksi:'精选收藏', fGenre:'类型分类', fTahun:'发行年份', fNegara:'制片国家', fAllCountries:'所有国家', fReset:'重置', fApply:'应用筛选', fLegend:'传奇', fVintage:'怀旧',
+    gHorror:'恐怖', gRomance:'浪漫', gAction:'动作', gComedy:'喜剧', gKDrama:'韩剧', gAnimation:'动画',
+    g28:'动作', g12:'冒险', g16:'动画', g35:'喜剧', g80:'犯罪', g99:'纪录片', g18:'剧情', g10751:'家庭', g14:'奇幻', g36:'历史', g27:'恐怖', g10402:'音乐', g9648:'悬疑', g10749:'爱情', g878:'科幻', g53:'惊悚', g10752:'战争', g37:'西部',
+    g10759:'动作 & 冒险', g10762:'儿童', g10763:'新闻', g10764:'真人秀', g10765:'科幻 & 奇幻', g10766:'肥皂剧', g10767:'脱口秀', g10768:'战争 & 政治'
   },
   'zh-CN': {
     home:'首页', film:'电影', series:'剧集', tv:'电视', history:'历史', save:'收藏',
