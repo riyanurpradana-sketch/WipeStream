@@ -2770,7 +2770,112 @@ body::after{
   color:var(--text3);
 }
 .sfp-no-result svg{width:48px;height:48px;margin-bottom:12px;opacity:0.4;}
-.sfp-no-result p{font-size:14px;}
+/* ===== ADVANCED FILTER STYLES ===== */
+.filter-btn-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(255, 0, 128, 0.1));
+  border: 1px solid rgba(0, 245, 255, 0.3);
+  border-radius: 30px;
+  color: var(--neon-cyan);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: 15px;
+}
+.filter-btn-main:hover {
+  box-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
+  transform: translateY(-2px);
+  background: rgba(0, 245, 255, 0.2);
+}
+#filter-panel-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#filter-panel-modal.open { display: flex; }
+#filter-panel-inner {
+  background: var(--bg1);
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  overflow-y: auto;
+  padding: 24px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.5);
+}
+.filter-group-title {
+  font-size: 11px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 20px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.filter-group-title::after { content:''; flex:1; height:1px; background: rgba(255,255,255,0.05); }
+.filter-grid-chips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.filter-chip {
+  padding: 8px;
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+  color: var(--text2);
+}
+.filter-chip:hover, .filter-chip.active {
+  background: rgba(0, 245, 255, 0.1);
+  color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+}
+.filter-chip.preset {
+  background: rgba(255, 0, 128, 0.05);
+  border-color: rgba(255, 0, 128, 0.2);
+  color: var(--neon-pink);
+}
+.filter-chip.preset:hover, .filter-chip.preset.active {
+  background: rgba(255, 0, 128, 0.2);
+  border-color: var(--neon-pink);
+  color: white;
+}
+.filter-actions {
+  position: sticky;
+  bottom: -24px;
+  left: -24px;
+  right: -24px;
+  padding: 20px;
+  background: var(--bg1);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  gap: 10px;
+}
+.filter-apply-btn {
+  flex: 1;
+  background: var(--neon-cyan);
+  color: #000;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
 </style>
 </head>
 <body>
@@ -2930,7 +3035,10 @@ body::after{
   <section id="sec-film" class="section">
     <div class="section-header"><h2 id="hdr-film">Film</h2></div>
     <div style="padding:0 12px;">
-      <div class="filter-bar" id="film-filter-bar"></div>
+      <button class="filter-btn-main" onclick="openFilterPanel('film')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        Filter & Discovery
+      </button>
       <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
         <select class="sort-select" id="film-sort" onchange="sortGrid('film')">
           <option value="pop" id="opt-film-pop">Populer</option>
@@ -2948,7 +3056,10 @@ body::after{
   <section id="sec-series" class="section">
     <div class="section-header"><h2 id="hdr-series">Series</h2></div>
     <div style="padding:0 12px;">
-      <div class="filter-bar" id="series-filter-bar"></div>
+      <button class="filter-btn-main" onclick="openFilterPanel('series')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Filter & Discovery
+      </button>
       <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
         <select class="sort-select" id="series-sort" onchange="sortGrid('series')">
           <option value="pop" id="opt-series-pop">Populer</option>
@@ -3307,7 +3418,65 @@ body::after{
   </div>
 </div>
 
-<!-- LIGHTBOX -->
+<!-- FILTER PANEL MODAL -->
+<div id="filter-panel-modal" onclick="if(event.target===this)closeFilterPanel()">
+  <div id="filter-panel-inner">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <h3 style="color:var(--neon-cyan);font-weight:900;">ADVANCED DISCOVERY</h3>
+      <button onclick="closeFilterPanel()" style="color:var(--text3);font-size:20px;">✕</button>
+    </div>
+
+    <div class="filter-group-title">Koleksi Terpilih</div>
+    <div class="filter-grid-chips" id="filter-moods">
+      <div class="filter-chip preset" onclick="applyFilterPreset('horror','27')">Horror</div>
+      <div class="filter-chip preset" onclick="applyFilterPreset('romance','10749')">Romance</div>
+      <div class="filter-chip preset" onclick="applyFilterPreset('action','28')">Action</div>
+      <div class="filter-chip preset" onclick="applyFilterPreset('comedy','35')">Comedy</div>
+      <div class="filter-chip preset" onclick="applyFilterPreset('k-drama','KR')">Korean Drama</div>
+      <div class="filter-chip preset" onclick="applyFilterPreset('anime','16')">Animation</div>
+    </div>
+
+    <div class="filter-group-title">Genre Kategori</div>
+    <div class="filter-grid-chips" id="filter-genre-grid"></div>
+
+    <div class="filter-group-title">Tahun Rilis</div>
+    <div class="filter-grid-chips" id="filter-year-grid">
+      <div class="filter-chip" onclick="setFilterYear('2024', this)">2024</div>
+      <div class="filter-chip" onclick="setFilterYear('2023', this)">2023</div>
+      <div class="filter-chip" onclick="setFilterYear('2022', this)">2022</div>
+      <div class="filter-chip" onclick="setFilterYear('2021', this)">2021</div>
+      <div class="filter-chip" onclick="setFilterYear('2020', this)">2020</div>
+      <div class="filter-chip" onclick="setFilterYear('2019', this)">2019</div>
+      <div class="filter-chip" onclick="setFilterYear('2018', this)">2018</div>
+      <div class="filter-chip" onclick="setFilterYear('2015-2017', this)">2015-17</div>
+      <div class="filter-chip" onclick="setFilterYear('2010-14', this)">2010-14</div>
+      <div class="filter-chip" onclick="setFilterYear('2000-2009', this)">Legenda</div>
+      <div class="filter-chip" onclick="setFilterYear('1990-1999', this)">Vintage</div>
+    </div>
+
+    <div class="filter-group-title">Negara Asal</div>
+    <select class="sort-select" style="width:100%;" id="filter-country-select">
+      <option value="">Semua Negara</option>
+      <option value="US">USA (Hollywood)</option>
+      <option value="ID">Indonesia 🇮🇩</option>
+      <option value="KR">Korea Selatan 🇰🇷</option>
+      <option value="JP">Jepang 🇯🇵</option>
+      <option value="CN">China 🇨🇳</option>
+      <option value="TH">Thailand 🇹🇭</option>
+      <option value="IN">India (Bollywood) 🇮🇳</option>
+      <option value="GB">Inggris 🇬🇧</option>
+      <option value="FR">Prancis 🇫🇷</option>
+      <option value="ES">Spanyol 🇪🇸</option>
+      <option value="PH">Filipina 🇵🇭</option>
+      <option value="TR">Turki 🇹🇷</option>
+    </select>
+
+    <div class="filter-actions">
+      <button class="filter-chip" style="flex:1;background:rgba(255,255,255,0.05);" onclick="resetFilterPanel()">Reset</button>
+      <button class="filter-apply-btn" onclick="applyFilterPanel()">Terapkan Filter</button>
+    </div>
+  </div>
+</div>
 <div id="lightbox">
   <button id="lightbox-close" onclick="closeLightbox()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -3906,12 +4075,27 @@ async function tmdb(path, params={}, signal=null) {
 // HERO
 // ============================================================
 async function initHero() {
-  const [trending, topMovies] = await Promise.all([
+  const [trendingDay, trendingWeek, topMovies] = await Promise.all([
+    tmdb('/trending/all/day'),
     tmdb('/trending/all/week'),
     tmdb('/movie/popular'),
   ]);
-  const items = [...(trending?.results||[]).slice(0,5), ...(topMovies?.results||[]).slice(0,3)];
-  state.heroItems = items.filter(i => i.backdrop_path);
+
+  // Gabungkan dan acak untuk variasi konten
+  let allItems = [
+    ...(trendingDay?.results || []),
+    ...(trendingWeek?.results || []),
+    ...(topMovies?.results || [])
+  ].filter(i => i.backdrop_path);
+
+  // Ambil 10 item unik secara acak
+  const seen = new Set();
+  state.heroItems = allItems.filter(item => {
+    if (seen.has(item.id)) return false;
+    seen.add(item.id);
+    return true;
+  }).sort(() => 0.5 - Math.random()).slice(0, 10);
+
   renderHeroDots();
   showHero(0);
   startHeroTimer();
@@ -4091,33 +4275,161 @@ function animateCounter(id, target) {
 }
 
 // ============================================================
-// FILM / SERIES GRID
+// ADVANCED FILTER LOGIC
 // ============================================================
-const GENRES_MOVIE = [{id:28,name:'Aksi'},{id:12,name:'Petualangan'},{id:16,name:'Animasi'},{id:35,name:'Komedi'},{id:80,name:'Kriminal'},{id:18,name:'Drama'},{id:14,name:'Fantasi'},{id:27,name:'Horror'},{id:9648,name:'Misteri'},{id:10749,name:'Romantis'},{id:878,name:'Sci-Fi'},{id:53,name:'Thriller'}];
-const GENRES_TV = [{id:16,name:'Animasi'},{id:35,name:'Komedi'},{id:80,name:'Kriminal'},{id:18,name:'Drama'},{id:10759,name:'Aksi'},{id:9648,name:'Misteri'},{id:10765,name:'Sci-Fi'},{id:10762,name:'Anak'},{id:10763,name:'Berita'},{id:10764,name:'Reality'}];
+let filterState = {
+  type: 'film',
+  genre: null,
+  year: '',
+  country: '',
+  isPreset: false
+};
 
-async function loadFilmGrid(reset=true) {
-  if (reset) { state.filmData.items=[]; state.filmData.page=1; document.getElementById('film-grid').innerHTML=''; }
-  renderFilterBar('film-filter-bar', GENRES_MOVIE, 'film');
-  const params = {page: state.filmData.page};
-  if (state.filmData.genre) params.with_genres = state.filmData.genre;
-  const sortMap = {pop:'popularity.desc',rating:'vote_average.desc',new:'release_date.desc',az:'original_title.asc'};
-  params.sort_by = sortMap[state.filmData.sort]||'popularity.desc';
+function openFilterPanel(type) {
+  filterState.type = type;
+  document.getElementById('filter-panel-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Render genre based on type
+  const genres = type === 'film' ? GENRES_MOVIE : GENRES_TV;
+  const grid = document.getElementById('filter-genre-grid');
+  grid.innerHTML = genres.map(g => `
+    <div class="filter-chip ${filterState.genre == g.id ? 'active' : ''}" data-id="${g.id}" onclick="setFilterGenre(${g.id}, this)">
+      ${g.name}
+    </div>
+  `).join('');
+}
+
+function closeFilterPanel() {
+  document.getElementById('filter-panel-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function setFilterGenre(id, el) {
+  const isActive = el.classList.contains('active');
+  document.querySelectorAll('#filter-genre-grid .filter-chip').forEach(c => c.classList.remove('active'));
+  if (!isActive) {
+    el.classList.add('active');
+    filterState.genre = id;
+  } else {
+    filterState.genre = null;
+  }
+}
+
+function setFilterYear(year, el) {
+  document.querySelectorAll('#filter-year-grid .filter-chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  filterState.year = year;
+}
+
+function applyFilterPreset(name, value) {
+  resetFilterPanel();
+  if (name === 'k-drama') {
+    filterState.country = 'KR';
+    filterState.genre = null;
+  } else {
+    filterState.genre = value;
+  }
+  applyFilterPanel();
+}
+
+function resetFilterPanel() {
+  filterState.genre = null;
+  filterState.year = '';
+  filterState.country = '';
+  document.querySelectorAll('#filter-panel-inner .filter-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('filter-country-select').value = '';
+}
+
+async function applyFilterPanel() {
+  const type = filterState.type;
+  if (type === 'film') await loadFilmGrid(true);
+  else await loadSeriesGrid(true);
+
+  closeFilterPanel();
+}
+// ============================================================
+const GENRES_MOVIE = [
+  {id:28,name:'Aksi'},{id:12,name:'Petualangan'},{id:16,name:'Animasi'},{id:35,name:'Komedi'},
+  {id:80,name:'Kriminal'},{id:99,name:'Dokumenter'},{id:18,name:'Drama'},{id:10751,name:'Keluarga'},
+  {id:14,name:'Fantasi'},{id:36,name:'Sejarah'},{id:27,name:'Horror'},{id:10402,name:'Musik'},
+  {id:9648,name:'Misteri'},{id:10749,name:'Romantis'},{id:878,name:'Sci-Fi'},{id:53,name:'Thriller'},
+  {id:10752,name:'Perang'},{id:37,name:'Western'}
+];
+const GENRES_TV = [
+  {id:10759,name:'Aksi & Petualangan'},{id:16,name:'Animasi'},{id:35,name:'Komedi'},{id:80,name:'Kriminal'},
+  {id:99,name:'Dokumenter'},{id:18,name:'Drama'},{id:10751,name:'Keluarga'},{id:10762,name:'Anak-anak'},
+  {id:9648,name:'Misteri'},{id:10763,name:'Berita'},{id:10764,name:'Reality'},{id:10765,name:'Sci-Fi & Fantasi'},
+  {id:10766,name:'Soap'},{id:10767,name:'Talk'},{id:10768,name:'War & Politics'},{id:37,name:'Western'}
+];
+
+async function loadFilmGrid(reset = true) {
+  const grid = document.getElementById('film-grid');
+  if (reset) {
+    state.filmData.items = [];
+    state.filmData.page = 1;
+    grid.innerHTML = '';
+  }
+
+  const params = {
+    page: state.filmData.page,
+    sort_by: state.filmData.sort === 'pop' ? 'popularity.desc' :
+             state.filmData.sort === 'rating' ? 'vote_average.desc' :
+             state.filmData.sort === 'new' ? 'primary_release_date.desc' : 'original_title.asc'
+  };
+
+  // Gabungkan dengan filter dari Discovery jika ada
+  if (filterState.type === 'film') {
+    if (filterState.genre) params.with_genres = filterState.genre;
+    if (filterState.country) params.with_origin_country = filterState.country;
+    if (filterState.year) {
+      if (filterState.year.includes('-')) {
+        const [start, end] = filterState.year.split('-');
+        params['primary_release_date.gte'] = `${start}-01-01`;
+        params['primary_release_date.lte'] = `${end}-12-31`;
+      } else {
+        params['primary_release_year'] = filterState.year;
+      }
+    }
+  }
+
   const data = await tmdb('/discover/movie', params);
-  const items = data?.results||[];
+  const items = data?.results || [];
   state.filmData.items.push(...items);
   appendToGrid('film-grid', items, 'movie');
 }
 
-async function loadSeriesGrid(reset=true) {
-  if (reset) { state.seriesData.items=[]; state.seriesData.page=1; document.getElementById('series-grid').innerHTML=''; }
-  renderFilterBar('series-filter-bar', GENRES_TV, 'series');
-  const params = {page: state.seriesData.page};
-  if (state.seriesData.genre) params.with_genres = state.seriesData.genre;
-  const sortMap = {pop:'popularity.desc',rating:'vote_average.desc',new:'first_air_date.desc',az:'original_name.asc'};
-  params.sort_by = sortMap[state.seriesData.sort]||'popularity.desc';
+async function loadSeriesGrid(reset = true) {
+  const grid = document.getElementById('series-grid');
+  if (reset) {
+    state.seriesData.items = [];
+    state.seriesData.page = 1;
+    grid.innerHTML = '';
+  }
+
+  const params = {
+    page: state.seriesData.page,
+    sort_by: state.seriesData.sort === 'pop' ? 'popularity.desc' :
+             state.seriesData.sort === 'rating' ? 'vote_average.desc' :
+             state.seriesData.sort === 'new' ? 'first_air_date.desc' : 'original_name.asc'
+  };
+
+  if (filterState.type === 'series') {
+    if (filterState.genre) params.with_genres = filterState.genre;
+    if (filterState.country) params.with_origin_country = filterState.country;
+    if (filterState.year) {
+      if (filterState.year.includes('-')) {
+        const [start, end] = filterState.year.split('-');
+        params['first_air_date.gte'] = `${start}-01-01`;
+        params['first_air_date.lte'] = `${end}-12-31`;
+      } else {
+        params['first_air_date_year'] = filterState.year;
+      }
+    }
+  }
+
   const data = await tmdb('/discover/tv', params);
-  const items = data?.results||[];
+  const items = data?.results || [];
   state.seriesData.items.push(...items);
   appendToGrid('series-grid', items, 'tv');
 }
@@ -5544,15 +5856,49 @@ function clearMemoryCache() {
 }
 
 function renderSettingsContent(tab) {
+  const lang = state.settings.language || 'id-ID';
+  const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   const s = state.settings;
   const content = document.getElementById('settings-content');
+
+  // Update Settings Title
+  const sTitle = document.getElementById('settings-title');
+  if (sTitle) {
+    const svg = sTitle.querySelector('svg');
+    sTitle.innerHTML = '';
+    if (svg) sTitle.appendChild(svg);
+    sTitle.appendChild(document.createTextNode(' ' + t.sTitle));
+  }
+
+  // Update Tab Labels
+  const tabMapping = {
+    'stab-tampilan': {text: t.sTampilan, icon: 'circle'},
+    'stab-player': {text: t.sPlayer, icon: 'polygon'},
+    'stab-adblock': {text: t.sAdblock, icon: 'path'},
+    'stab-data': {text: t.sData, icon: 'ellipse'},
+    'stab-notif': {text: t.sNotif, icon: 'path'},
+    'stab-devmode': {text: t.sDev, icon: 'polyline'},
+    'stab-cache': {text: t.sCache, icon: 'polyline'},
+    'stab-tentang': {text: t.sAbout, icon: 'circle'}
+  };
+
+  Object.entries(tabMapping).forEach(([id, info]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const svg = el.querySelector('svg');
+      el.innerHTML = '';
+      if (svg) el.appendChild(svg);
+      el.appendChild(document.createTextNode(' ' + info.text));
+    }
+  });
+
   if (tab === 'cache') {
     setTimeout(updateCacheSizeDisplay, 100);
   }
   const tabs = {
     tampilan: `
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Bahasa TMDB</div><div class="settings-item-desc">Ganti bahasa metadata film (judul, sinopsis)</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sLang}</div><div class="settings-item-desc">${t.sLangDesc}</div></div>
         <select class="sort-select" onchange="if(confirm('Ganti bahasa dan muat ulang halaman?')){saveSetting('language',this.value); location.reload()}else{this.value='${s.language||'id-ID'}'}">
           <option value="id-ID" ${s.language==='id-ID'?'selected':''}>Bahasa Indonesia</option>
           <option value="en-US" ${s.language==='en-US'?'selected':''}>English (US)</option>
@@ -5562,28 +5908,28 @@ function renderSettingsContent(tab) {
         </select>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Tema Gelap</div><div class="settings-item-desc">Selalu aktif (cyberpunk mode)</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sDark}</div><div class="settings-item-desc">${t.sDarkDesc}</div></div>
         <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Efek Partikel</div><div class="settings-item-desc">Animasi partikel di background</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sPart}</div><div class="settings-item-desc">${t.sPartDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.particles!==false?'checked':''} onchange="saveSetting('particles',this.checked);toggleParticles(this.checked)"><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Efek Scanline</div><div class="settings-item-desc">Garis scanline cyberpunk</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sScan}</div><div class="settings-item-desc">${t.sScanDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.scanline!==false?'checked':''} onchange="saveSetting('scanline',this.checked);toggleScanline(this.checked)"><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Animasi Smooth</div><div class="settings-item-desc">Transisi dan animasi halus</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sAnim}</div><div class="settings-item-desc">${t.sAnimDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.animations!==false?'checked':''} onchange="saveSetting('animations',this.checked)"><span class="toggle-slider"></span></label>
       </div>`,
     player: `
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Auto-play Berikutnya</div><div class="settings-item-desc">Otomatis putar episode berikutnya</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sAuto}</div><div class="settings-item-desc">${t.sAutoDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.autoplay?'checked':''} onchange="saveSetting('autoplay',this.checked)"><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Server Default</div><div class="settings-item-desc">Server yang digunakan pertama kali</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sSrv}</div><div class="settings-item-desc">${t.sSrvDesc}</div></div>
         <select class="sort-select" onchange="saveSetting('defaultServer',this.value)">
           ${SERVERS.map((s2,i)=>`<option value="${i}" ${s.defaultServer==i?'selected':''}>${s2.name}</option>`).join('')}
         </select>
@@ -5591,84 +5937,79 @@ function renderSettingsContent(tab) {
     adblock: buildAdblockSettings(),
     data: `
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Hapus Riwayat</div><div class="settings-item-desc">Hapus semua riwayat tontonan</div></div>
-        <button class="clear-all-btn" style="width:auto;padding:8px 14px;" onclick="clearHistory();closeSettings()">Hapus</button>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sClearH}</div><div class="settings-item-desc">${t.sClearHDesc}</div></div>
+        <button class="clear-all-btn" style="width:auto;padding:8px 14px;" onclick="clearHistory();closeSettings()">${t.sDel}</button>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Hapus Daftar Simpan</div><div class="settings-item-desc">Hapus semua film yang disimpan</div></div>
-        <button class="clear-all-btn" style="width:auto;padding:8px 14px;" onclick="localStorage.removeItem('abcx_watchlist');showToast('Daftar simpan dihapus','success');closeSettings()">Hapus</button>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sClearW}</div><div class="settings-item-desc">${t.sClearWDesc}</div></div>
+        <button class="clear-all-btn" style="width:auto;padding:8px 14px;" onclick="localStorage.removeItem('abcx_watchlist');showToast('Daftar simpan dihapus','success');closeSettings()">${t.sDel}</button>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Reset Semua Data</div><div class="settings-item-desc">Hapus semua data lokal</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sReset}</div><div class="settings-item-desc">${t.sResetDesc}</div></div>
         <button class="clear-all-btn" style="width:auto;padding:8px 14px;" onclick="if(confirm('Reset semua data?')){localStorage.clear();location.reload()}">Reset</button>
       </div>`,
     notif: `
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Notifikasi Blokir Iklan</div><div class="settings-item-desc">Tampilkan notifikasi saat iklan diblokir</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sNotifAd}</div><div class="settings-item-desc">${t.sNotifAdDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.notifAdblock!==false?'checked':''} onchange="saveSetting('notifAdblock',this.checked)"><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Notifikasi Sistem</div><div class="settings-item-desc">Notifikasi dari browser (jika diizinkan)</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sNotifSys}</div><div class="settings-item-desc">${t.sNotifSysDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.notifSystem?'checked':''} onchange="saveSetting('notifSystem',this.checked);if(this.checked&&Notification)Notification.requestPermission()"><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Suara Notifikasi</div><div class="settings-item-desc">Bunyi saat notifikasi muncul</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sNotifSnd}</div><div class="settings-item-desc">${t.sNotifSndDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.notifSound?'checked':''} onchange="saveSetting('notifSound',this.checked)"><span class="toggle-slider"></span></label>
       </div>`,
     devmode: `
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Mode Developer</div><div class="settings-item-desc">Tampilkan info debug dan performa</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sDevMode}</div><div class="settings-item-desc">${t.sDevModeDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.devMode?'checked':''} onchange="saveSetting('devMode',this.checked);toggleDevMode(this.checked)"><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Console Log Overlay</div><div class="settings-item-desc">Tampilkan log di layar</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sConsole}</div><div class="settings-item-desc">${t.sConsoleDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.consoleOverlay?'checked':''} onchange="saveSetting('consoleOverlay',this.checked);toggleConsoleOverlay(this.checked)"><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">API Call Counter</div><div class="settings-item-desc">Hitung jumlah request ke TMDB API</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sApi}</div><div class="settings-item-desc">${t.sApiDesc}</div></div>
         <div style="font-size:18px;font-weight:800;color:var(--neon-cyan);">${window._apiCallCount||0}</div>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Versi File</div><div class="settings-item-desc">Info build saat ini</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sVer}</div><div class="settings-item-desc">${t.sVerDesc}</div></div>
         <div style="font-size:11px;color:var(--text3);font-family:monospace;">ABCxWipe v8.9 | Nuclear Anti-Ad v4.0</div>
       </div>`,
     cache: `
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Memory Cache</div><div class="settings-item-desc">Data API yang tersimpan sementara (cepat)</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sMem}</div><div class="settings-item-desc">${t.sMemDesc}</div></div>
         <div style="display:flex;align-items:center;gap:10px;">
           <div style="font-size:14px;font-weight:700;color:var(--neon-cyan);">${API_CACHE.size} item</div>
-          <button class="clear-all-btn" style="width:auto;padding:6px 12px;margin:0;" onclick="clearMemoryCache()">Hapus</button>
+          <button class="clear-all-btn" style="width:auto;padding:6px 12px;margin:0;" onclick="clearMemoryCache()">${t.sDel}</button>
         </div>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Ukuran Storage</div><div class="settings-item-desc">Gambar & data yang tersimpan di disk</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sStorage}</div><div class="settings-item-desc">${t.sStorageDesc}</div></div>
         <div style="font-size:14px;font-weight:700;color:var(--neon-cyan);" id="cache-size-display">Menghitung...</div>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Hapus Cache Storage</div><div class="settings-item-desc">Hapus cache gambar (offline support)</div></div>
-        <button class="clear-all-btn" style="width:auto;padding:8px 14px;" onclick="clearSWCache()">Hapus Cache</button>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sClearS}</div><div class="settings-item-desc">${t.sClearSDesc}</div></div>
+        <button class="clear-all-btn" style="width:auto;padding:8px 14px;" onclick="clearSWCache()">${t.sDel}</button>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Export Data</div><div class="settings-item-desc">Unduh semua data (riwayat, simpan, pengaturan) sebagai JSON</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sExport}</div><div class="settings-item-desc">${t.sExportDesc}</div></div>
         <button class="clear-all-btn" style="width:auto;padding:8px 14px;background:rgba(0,245,255,0.1);border-color:rgba(0,245,255,0.3);color:var(--neon-cyan);" onclick="exportData()">Export JSON</button>
       </div>
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Import Data</div><div class="settings-item-desc">Pulihkan data dari file JSON</div></div>
+        <div class="settings-item-info"><div class="settings-item-label">${t.sImport}</div><div class="settings-item-desc">${t.sImportDesc}</div></div>
         <label style="cursor:pointer;padding:8px 14px;background:rgba(0,245,255,0.1);border:1px solid rgba(0,245,255,0.3);border-radius:6px;color:var(--neon-cyan);font-size:12px;font-weight:600;">
           Import JSON<input type="file" accept=".json" style="display:none;" onchange="importData(this)">
         </label>
       </div>`,
-        tentang: `
+    tentang: `
       <div style="text-align:center;padding:20px 0;">
         <div style="font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--neon-cyan),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;">ABCxWipe</div>
         <div style="font-size:13px;color:var(--text3);margin-bottom:16px;">v8.0 — Cyberpunk Edition</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.8;">
-          Platform streaming film & series<br>
-          Powered by TMDB API<br>
-          Anti-Iklan & Anti-Redirect built-in<br>
-          PWA Support (Install ke Home Screen)<br>
-          <br>
-          <span style="color:var(--text4);">Data film dari The Movie Database (TMDB)</span>
+          ${t.sAboutDesc}
         </div>
       </div>`,
   };
@@ -5677,6 +6018,8 @@ function renderSettingsContent(tab) {
 
 // ── BLACKLIST MANAGER BUILDER ─────────────────────────────
 function buildAdblockSettings() {
+  const lang = state.settings.language || 'id-ID';
+  const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   const totalBlocked = parseInt(localStorage.getItem('abcx_total_blocked') || '0');
   const sessionBlocked = window._adBlockSession || 0;
   const bl = window._adBlockGetBlacklist ? window._adBlockGetBlacklist() : [];
@@ -5696,31 +6039,31 @@ function buildAdblockSettings() {
     <div class="bl-stats-row">
       <div class="bl-stat-box">
         <div class="bl-stat-num">${totalBlocked}</div>
-        <div class="bl-stat-label">Total Diblokir</div>
+        <div class="bl-stat-label">${t.abTotal}</div>
       </div>
       <div class="bl-stat-box green">
         <div class="bl-stat-num">${sessionBlocked}</div>
-        <div class="bl-stat-label">Sesi Ini</div>
+        <div class="bl-stat-label">${t.abSession}</div>
       </div>
       <div class="bl-stat-box pink">
         <div class="bl-stat-num">${bl.length}</div>
-        <div class="bl-stat-label">Domain Diblokir</div>
+        <div class="bl-stat-label">${t.abDomain}</div>
       </div>
     </div>
     <div style="background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);border-radius:8px;padding:10px;margin-bottom:12px;">
-      <div style="font-size:11px;color:var(--neon-green);font-weight:700;margin-bottom:3px;">✓ Nuclear Anti-Ad v2.0 Aktif</div>
-      <div style="font-size:10px;color:var(--text3);line-height:1.5;">window.open blocked • visibilitychange refocus • click interceptor • DOM cleaner • periodic cleanup setiap 5 detik</div>
+      <div style="font-size:11px;color:var(--neon-green);font-weight:700;margin-bottom:3px;">✓ ${t.abActive}</div>
+      <div style="font-size:10px;color:var(--text3);line-height:1.5;">${t.abDesc}</div>
     </div>
-    <div class="bl-section-title">Tambah Domain Custom</div>
+    <div class="bl-section-title">${t.abAdd}</div>
     <div class="bl-add-row">
-      <input class="bl-add-input" id="bl-new-domain" placeholder="contoh: badads.com" type="text" onkeydown="if(event.key==='Enter')blAddDomain()">
-      <button class="bl-add-btn" onclick="blAddDomain()">+ Tambah</button>
+      <input class="bl-add-input" id="bl-new-domain" placeholder="${t.abPlaceholder}" type="text" onkeydown="if(event.key==='Enter')blAddDomain()">
+      <button class="bl-add-btn" onclick="blAddDomain()">${t.abBtnAdd}</button>
     </div>
-    <div class="bl-section-title">Daftar Domain Diblokir (${bl.length})</div>
+    <div class="bl-section-title">${t.abList} (${bl.length})</div>
     <div class="bl-domain-list" id="bl-domain-list">${domainItems}</div>
     <div style="margin-top:10px;display:flex;gap:8px;">
-      <button class="clear-all-btn" style="width:auto;padding:6px 12px;font-size:11px;" onclick="localStorage.setItem('abcx_total_blocked','0');window._adBlockCount=0;window._adBlockSession=0;renderSettingsContent('adblock');showToast('Counter direset','success')">Reset Counter</button>
-      <button class="clear-all-btn" style="width:auto;padding:6px 12px;font-size:11px;background:rgba(255,0,128,0.15);border-color:rgba(255,0,128,0.4);color:var(--neon-pink);" onclick="if(confirm('Hapus semua domain custom?')){localStorage.removeItem('abcx_custom_blacklist');renderSettingsContent('adblock');showToast('Domain custom dihapus','success')}">Hapus Custom</button>
+      <button class="clear-all-btn" style="width:auto;padding:6px 12px;font-size:11px;" onclick="localStorage.setItem('abcx_total_blocked','0');window._adBlockCount=0;window._adBlockSession=0;renderSettingsContent('adblock');showToast('Counter direset','success')">${t.abReset}</button>
+      <button class="clear-all-btn" style="width:auto;padding:6px 12px;font-size:11px;background:rgba(255,0,128,0.15);border-color:rgba(255,0,128,0.4);color:var(--neon-pink);" onclick="if(confirm('Hapus semua domain custom?')){localStorage.removeItem('abcx_custom_blacklist');renderSettingsContent('adblock');showToast('Domain custom dihapus','success')}">${t.abClear}</button>
     </div>
   </div>`;
 }
@@ -5785,7 +6128,16 @@ const UI_LANGS = {
     pop:'Populer', rating:'Rating', new:'Terbaru', az:'A-Z',
     hTotal:'Total Ditonton', hHours:'Jam Menonton', hToday:'Hari Ini', hFav:'Genre Favorit',
     hSub1:'film & series', hSub2:'estimasi total', hSub3:'ditonton hari ini', hSub4:'paling sering',
-    hActivity:'Aktivitas 7 Hari Terakhir', hTopGenre:'Top Genre', hClear:'Hapus Semua Riwayat'
+    hActivity:'Aktivitas 7 Hari Terakhir', hTopGenre:'Top Genre', hClear:'Hapus Semua Riwayat',
+    sTitle:'Pengaturan', sTampilan:'Tampilan', sPlayer:'Player', sAdblock:'Anti-Iklan', sData:'Data', sNotif:'Notifikasi', sDev:'Developer', sCache:'Cache', sAbout:'Tentang',
+    sLang:'Bahasa TMDB', sLangDesc:'Ganti bahasa metadata film (judul, sinopsis)', sDark:'Tema Gelap', sDarkDesc:'Selalu aktif (cyberpunk mode)', sPart:'Efek Partikel', sPartDesc:'Animasi partikel di background', sScan:'Efek Scanline', sScanDesc:'Garis scanline cyberpunk', sAnim:'Animasi Smooth', sAnimDesc:'Transisi dan animasi halus',
+    sAuto:'Auto-play Berikutnya', sAutoDesc:'Otomatis putar episode berikutnya', sSrv:'Server Default', sSrvDesc:'Server yang digunakan pertama kali',
+    sClearH:'Hapus Riwayat', sClearHDesc:'Hapus semua riwayat tontonan', sClearW:'Hapus Daftar Simpan', sClearWDesc:'Hapus semua film yang disimpan', sReset:'Reset Semua Data', sResetDesc:'Hapus semua data lokal', sDel:'Hapus',
+    sNotifAd:'Notifikasi Blokir Iklan', sNotifAdDesc:'Tampilkan notifikasi saat iklan diblokir', sNotifSys:'Notifikasi Sistem', sNotifSysDesc:'Notifikasi dari browser (jika diizinkan)', sNotifSnd:'Suara Notifikasi', sNotifSndDesc:'Bunyi saat notifikasi muncul',
+    sDevMode:'Mode Developer', sDevModeDesc:'Tampilkan info debug dan performa', sConsole:'Console Log Overlay', sConsoleDesc:'Tampilkan log di layar', sApi:'API Call Counter', sApiDesc:'Hitung jumlah request ke TMDB API', sVer:'Versi File', sVerDesc:'Info build saat ini',
+    sMem:'Memory Cache', sMemDesc:'Data API yang tersimpan sementara (cepat)', sStorage:'Ukuran Storage', sStorageDesc:'Gambar & data yang tersimpan di disk', sClearS:'Hapus Cache Storage', sClearSDesc:'Hapus cache gambar (offline support)', sExport:'Export Data', sExportDesc:'Unduh semua data sebagai JSON', sImport:'Import Data', sImportDesc:'Pulihkan data dari file JSON',
+    sAboutDesc:'Platform streaming film & series<br>Powered by TMDB API<br>Anti-Iklan & Anti-Redirect built-in<br>PWA Support (Install ke Home Screen)<br><br><span style="color:var(--text4);">Data film dari The Movie Database (TMDB)</span>',
+    abTotal:'Total Diblokir', abSession:'Sesi Ini', abDomain:'Domain Diblokir', abActive:'Nuclear Anti-Ad v2.0 Aktif', abDesc:'window.open blocked • visibilitychange refocus • click interceptor • DOM cleaner • periodic cleanup setiap 5 detik', abAdd:'Tambah Domain Custom', abList:'Daftar Domain Diblokir', abPlaceholder:'contoh: badads.com', abBtnAdd:'+ Tambah', abReset:'Reset Counter', abClear:'Hapus Custom'
   },
   'en-US': {
     home:'Home', film:'Movies', series:'Series', tv:'TV Shows', history:'History', save:'Watchlist',
@@ -5795,7 +6147,16 @@ const UI_LANGS = {
     pop:'Popular', rating:'Rating', new:'Newest', az:'A-Z',
     hTotal:'Total Watched', hHours:'Watch Time', hToday:'Today', hFav:'Top Genre',
     hSub1:'movies & series', hSub2:'total estimate', hSub3:'watched today', hSub4:'most frequent',
-    hActivity:'Activity Last 7 Days', hTopGenre:'Top Genres', hClear:'Clear All History'
+    hActivity:'Activity Last 7 Days', hTopGenre:'Top Genres', hClear:'Clear All History',
+    sTitle:'Settings', sTampilan:'Appearance', sPlayer:'Player', sAdblock:'Anti-Ad', sData:'Data', sNotif:'Notifications', sDev:'Developer', sCache:'Cache', sAbout:'About',
+    sLang:'TMDB Language', sLangDesc:'Change movie metadata language (title, synopsis)', sDark:'Dark Theme', sDarkDesc:'Always active (cyberpunk mode)', sPart:'Particle Effects', sPartDesc:'Background particle animations', sScan:'Scanline Effect', sScanDesc:'Cyberpunk scanline lines', sAnim:'Smooth Animation', sAnimDesc:'Smooth transitions and animations',
+    sAuto:'Next Auto-play', sAutoDesc:'Automatically play next episode', sSrv:'Default Server', sSrvDesc:'Server used first time',
+    sClearH:'Clear History', sClearHDesc:'Delete all watch history', sClearW:'Clear Watchlist', sClearWDesc:'Delete all saved movies', sReset:'Reset All Data', sResetDesc:'Delete all local data', sDel:'Delete',
+    sNotifAd:'Adblock Notifications', sNotifAdDesc:'Show notification when ad is blocked', sNotifSys:'System Notifications', sNotifSysDesc:'Browser notifications (if allowed)', sNotifSnd:'Notification Sound', sNotifSndDesc:'Sound when notification appears',
+    sDevMode:'Developer Mode', sDevModeDesc:'Show debug and performance info', sConsole:'Console Log Overlay', sConsoleDesc:'Show logs on screen', sApi:'API Call Counter', sApiDesc:'Count TMDB API requests', sVer:'File Version', sVerDesc:'Current build info',
+    sMem:'Memory Cache', sMemDesc:'Temporary stored API data (fast)', sStorage:'Storage Size', sStorageDesc:'Images & data stored on disk', sClearS:'Clear Storage Cache', sClearSDesc:'Clear image cache (offline support)', sExport:'Export Data', sExportDesc:'Download all data as JSON', sImport:'Import Data', sImportDesc:'Restore data from JSON file',
+    sAboutDesc:'Movie & series streaming platform<br>Powered by TMDB API<br>Built-in Anti-Ad & Anti-Redirect<br>PWA Support (Install to Home Screen)<br><br><span style="color:var(--text4);">Movie data from The Movie Database (TMDB)</span>',
+    abTotal:'Total Blocked', abSession:'This Session', abDomain:'Domains Blocked', abActive:'Nuclear Anti-Ad v2.0 Active', abDesc:'window.open blocked • visibilitychange refocus • click interceptor • DOM cleaner • periodic cleanup every 5s', abAdd:'Add Custom Domain', abList:'Blocked Domains List', abPlaceholder:'e.g. badads.com', abBtnAdd:'+ Add', abReset:'Reset Counter', abClear:'Clear Custom'
   },
   'ja-JP': {
     home:'ホーム', film:'映画', series:'シリーズ', tv:'テレビ', history:'履歴', save:'リスト',
@@ -5805,7 +6166,15 @@ const UI_LANGS = {
     pop:'人気', rating:'評価', new:'最新', az:'A-Z',
     hTotal:'合計視聴数', hHours:'合計時間', hToday:'今日', hFav:'ジャンル',
     hSub1:'作品', hSub2:'推定合計', hSub3:'今日の視聴', hSub4:'頻度',
-    hActivity:'直近7日間の活動', hTopGenre:'トップジャンル', hClear:'履歴を削除'
+    hActivity:'直近7日間の活動', hTopGenre:'トップジャンル', sTitle:'設定', sTampilan:'表示', sPlayer:'プレイヤー', sAdblock:'広告ブロック', sData:'データ', sNotif:'通知', sDev:'開発者', sCache:'キャッシュ', sAbout:'詳細',
+    sLang:'TMDB言語', sLangDesc:'メタデータの言語を変更', sDark:'ダークテーマ', sDarkDesc:'常に有効', sPart:'パーティクル', sPartDesc:'背景アニメーション', sScan:'スキャンライン', sScanDesc:'サイバーパンク効果', sAnim:'スムーズアニメ', sAnimDesc:'滑らかな遷移',
+    sAuto:'自動再生', sAutoDesc:'次のエピソードを再生', sSrv:'デフォルトサーバ', sSrvDesc:'優先サーバ',
+    sClearH:'履歴削除', sClearHDesc:'視聴履歴をすべて削除', sClearW:'リスト削除', sClearWDesc:'保存した作品を削除', sReset:'全データリセット', sResetDesc:'ローカルデータを削除', sDel:'削除',
+    sNotifAd:'広告通知', sNotifAdDesc:'ブロック時に通知', sNotifSys:'システム通知', sNotifSysDesc:'ブラウザ通知', sNotifSnd:'通知音', sNotifSndDesc:'通知時の音',
+    sDevMode:'開発者モード', sDevModeDesc:'デバッグ情報を表示', sConsole:'ログオーバーレイ', sConsoleDesc:'画面にログを表示', sApi:'APIカウンタ', sApiDesc:'リクエスト数をカウント', sVer:'バージョン', sVerDesc:'ビルド情報',
+    sMem:'メモリキャッシュ', sMemDesc:'一時データ', sStorage:'ストレージ容量', sStorageDesc:'ディスク使用量', sClearS:'ストレージ削除', sClearSDesc:'画像キャッシュを削除', sExport:'エクスポート', sExportDesc:'JSONで保存', sImport:'インポート', sImportDesc:'JSONから復元',
+    sAboutDesc:'映画＆シリーズストリーミング<br>TMDB API搭載<br>広告＆リダイレクト防止<br>PWA対応<br><br><span style="color:var(--text4);">データ提供: The Movie Database (TMDB)</span>', hClear:'履歴を削除',
+    abTotal:'ブロック合計', abSession:'現在のセッション', abDomain:'ブロックされたドメイン', abActive:'Nuclear Anti-Ad v2.0 有効', abDesc:'window.open ブロック • フォーカスガード • クリック監視 • DOMクリーナー • 5秒ごとのクリーンアップ', abAdd:'カスタムドメイン追加', abList:'ブロックリスト', abPlaceholder:'例: badads.com', abBtnAdd:'+ 追加', abReset:'カウンタリセット', abClear:'カスタム削除'
   },
   'ko-KR': {
     home:'홈', film:'영화', series:'시리즈', tv:'TV쇼', history:'기록', save:'저장됨',
@@ -5815,7 +6184,35 @@ const UI_LANGS = {
     pop:'인기순', rating:'평점순', new:'최신순', az:'이름순',
     hTotal:'총 시청 수', hHours:'시청 시간', hToday:'오늘', hFav:'장르',
     hSub1:'영화 & 시리즈', hSub2:'총 예상', hSub3:'오늘 시청', hSub4:'자주 시청',
-    hActivity:'최근 7일 활동', hTopGenre:'인기 장르', hClear:'모든 기록 삭제'
+    hActivity:'최근 7일 활동', hTopGenre:'인기 장르', hClear:'모든 기록 삭제',
+    sTitle:'설정', sTampilan:'화면', sPlayer:'플레이어', sAdblock:'광고 차단', sData:'데이터', sNotif:'알림', sDev:'개발자', sCache:'캐시', sAbout:'정보',
+    sLang:'TMDB 언어', sLangDesc:'메타데이터 언어 변경', sDark:'다크 모드', sDarkDesc:'항상 활성화', sPart:'파티클 효과', sPartDesc:'배경 애니메이션', sScan:'스캔라인', sScanDesc:'사이버펑크 효과', sAnim:'부드러운 애니메이션', sAnimDesc:'부드러운 화면 전환',
+    sAuto:'자동 재생', sAutoDesc:'다음 에피소드 자동 재생', sSrv:'기본 서버', sSrvDesc:'기본 스트리밍 서버',
+    sClearH:'기록 삭제', sClearHDesc:'모든 시청 기록 삭제', sClearW:'목록 삭제', sClearWDesc:'저장된 모든 작품 삭제', sReset:'전체 초기화', sResetDesc:'모든 로컬 데이터 삭제', sDel:'삭제',
+    sNotifAd:'광고 알림', sNotifAdDesc:'광고 차단 시 알림 표시', sNotifSys:'시스템 알림', sNotifSysDesc:'브라우저 알림 허용', sNotifSnd:'알림음', sNotifSndDesc:'알림 발생 시 소리 재생',
+    sDevMode:'개발자 모드', sDevModeDesc:'디버그 정보 표시', sConsole:'로그 오버레이', sConsoleDesc:'화면에 로그 표시', sApi:'API 카운터', sApiDesc:'API 요청 횟수', sVer:'버전 정보', sVerDesc:'현재 빌드 정보',
+    sMem:'메모리 캐시', sMemDesc:'임시 저장 데이터', sStorage:'저장 공간', sStorageDesc:'디스크 사용량', sClearS:'스토리지 삭제', sClearSDesc:'이미지 캐시 삭제', sExport:'데이터 내보내기', sExportDesc:'JSON 파일로 저장', sImport:'데이터 가져오기', sImportDesc:'JSON 파일에서 복구',
+    sAboutDesc:'영화 및 시리즈 스트리밍 플랫폼<br>TMDB API 지원<br>광고 및 리다이렉트 차단 내장<br>PWA 지원<br><br><span style="color:var(--text4);">데이터 출처: The Movie Database (TMDB)</span>',
+    abTotal:'총 차단 수', abSession:'현재 세션', abDomain:'차단된 도메인', abActive:'Nuclear Anti-Ad v2.0 활성화', abDesc:'window.open 차단 • 포커스 가드 • 클릭 감시 • DOM 클리너 • 5초 간격 정리', abAdd:'커스텀 도메인 추가', abList:'차단 목록', abPlaceholder:'예: badads.com', abBtnAdd:'+ 추가', abReset:'카운터 초기화', abClear:'커스텀 삭제'
+  },
+  'zh-CN': {
+    home:'首页', film:'电影', series:'剧集', tv:'电视', history:'历史', save:'收藏',
+    search:'搜索电影、剧集...', watch:'立即观看', detail:'详情',
+    watched:'已观看', saved:'已收藏', hours:'观看时长', favGenre:'最爱类型',
+    continue:'继续观看', seeAll:'查看全部', loadMore:'加载更多',
+    pop:'热门', rating:'评分', new:'最新', az:'A-Z',
+    hTotal:'总观看数', hHours:'观看时长', hToday:'今日观看', hFav:'最爱类型',
+    hSub1:'电影 & 剧集', hSub2:'预估总时长', hSub3:'今日已看', hSub4:'最常观看',
+    hActivity:'最近7天活动', hTopGenre:'热门类型', hClear:'清除所有历史',
+    sTitle:'设置', sTampilan:'外观', sPlayer:'播放器', sAdblock:'广告拦截', sData:'数据', sNotif:'通知', sDev:'开发者', sCache:'缓存', sAbout:'关于',
+    sLang:'TMDB语言', sLangDesc:'更改电影元数据语言（标题、简介）', sDark:'深色模式', sDarkDesc:'始终开启（赛博朋克模式）', sPart:'粒子效果', sPartDesc:'背景粒子动画', sScan:'扫描线效果', sScanDesc:'赛博朋克扫描线', sAnim:'平滑动画', sAnimDesc:'平滑的界面过渡',
+    sAuto:'自动播放下一集', sAutoDesc:'自动播放下一集内容', sSrv:'默认服务器', sSrvDesc:'优先使用的播放服务器',
+    sClearH:'清除历史', sClearHDesc:'删除所有观看历史记录', sClearW:'清除收藏', sClearWDesc:'删除所有已收藏的内容', sReset:'重置所有数据', sResetDesc:'删除所有本地数据', sDel:'删除',
+    sNotifAd:'广告拦截通知', sNotifAdDesc:'拦截广告时显示通知', sNotifSys:'系统通知', sNotifSysDesc:'浏览器通知（如果允许）', sNotifSnd:'通知声音', sNotifSndDesc:'显示通知时播放声音',
+    sDevMode:'开发者模式', sDevModeDesc:'显示调试和性能信息', sConsole:'控制台日志叠加', sConsoleDesc:'在屏幕上显示日志', sApi:'API调用计数', sApiDesc:'统计TMDB API请求次数', sVer:'文件版本', sVerDesc:'当前构建信息',
+    sMem:'内存缓存', sMemDesc:'临时存储的API数据（快）', sStorage:'存储占用', sStorageDesc:'磁盘上存储的图片和数据', sClearS:'清除存储缓存', sClearSDesc:'清除图片缓存（离线支持）', sExport:'导出数据', sExportDesc:'将所有数据下载为JSON文件', sImport:'导入数据', sImportDesc:'从JSON文件恢复数据',
+    sAboutDesc:'电影和剧集流媒体平台<br>由TMDB API驱动<br>内置广告和重定向拦截<br>支持PWA（添加到主屏幕）<br><br><span style="color:var(--text4);">电影数据来自 The Movie Database (TMDB)</span>',
+    abTotal:'总拦截数', abSession:'本次会话', abDomain:'已拦截域名', abActive:'Nuclear Anti-Ad v2.0 已激活', abDesc:'拦截 window.open • 焦点保护 • 点击拦截 • DOM清理 • 每5秒自动整理', abAdd:'添加自定义域名', abList:'拦截域名列表', abPlaceholder:'例如: badads.com', abBtnAdd:'+ 添加', abReset:'重置计数器', abClear:'清除自定义'
   },
 };
 
