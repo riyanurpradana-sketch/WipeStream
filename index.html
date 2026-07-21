@@ -12,6 +12,16 @@
 <meta name="msapplication-TileColor" content="#0a0a0f">
 <meta name="theme-color" content="#0a0a0f">
 <title>ABCxWipe — Stream Unlimited</title>
+<link rel="preconnect" href="https://vidsrc.to" crossorigin>
+<link rel="preconnect" href="https://vidsrc.me" crossorigin>
+<link rel="preconnect" href="https://vidsrc.cc" crossorigin>
+<link rel="preconnect" href="https://vidsrc.xyz" crossorigin>
+<link rel="preconnect" href="https://2embed.cc" crossorigin>
+<link rel="preconnect" href="https://2embed.org" crossorigin>
+<link rel="preconnect" href="https://superembed.stream" crossorigin>
+<link rel="dns-prefetch" href="https://vidsrc.to">
+<link rel="dns-prefetch" href="https://vidsrc.xyz">
+<link rel="dns-prefetch" href="https://2embed.cc">
 <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22ABCxWipe%20Streaming%22%2C%22short_name%22%3A%22ABCxWipe%22%2C%22description%22%3A%22Streaming%20Film%20%26%20Series%20Terbaik%22%2C%22start_url%22%3A%22.%2F%22%2C%22scope%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230a0a0f%22%2C%22theme_color%22%3A%22%230a0a0f%22%2C%22orientation%22%3A%22portrait-primary%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fui-avatars.com%2Fapi%2F%3Fname%3DA%26background%3D00f5ff%26color%3D0a0a0f%26size%3D192%26bold%3Dtrue%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Fui-avatars.com%2Fapi%2F%3Fname%3DA%26background%3D00f5ff%26color%3D0a0a0f%26size%3D512%26bold%3Dtrue%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3384,6 +3394,10 @@ body::after{
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
         Fullscreen
       </button>
+      <button class="player-ctrl-btn" onclick="fixBuffering()" style="border-color:var(--neon-green);color:var(--neon-green);background:rgba(0,255,136,0.05);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Turbo Fix
+      </button>
     </div>
       <div style="background:var(--bg2);border:1px solid rgba(0,245,255,0.1);border-radius:var(--radius-sm);padding:12px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -3578,12 +3592,11 @@ body::after{
 
 <script>
 // ============================================================
-// NUCLEAR ANTI-IKLAN & ANTI-REDIRECT SYSTEM v4.0 (Aggressive + Whitelist-Safe)
+// NUCLEAR ANTI-IKLAN & ANTI-REDIRECT SYSTEM v6.0 (Ultimate Lockdown + Auto-Banish)
 // ============================================================
 (function(){
   'use strict';
 
-  // ── 0. WHITELIST — JANGAN PERNAH DIBLOKIR ─────────────────────────────────
   const WHITELIST = [
     'vidsrc.to','vidsrc.me','vidsrc.cc','vidsrc.pro',
     'superembed.stream','smashystream.com','player.smashystream.com',
@@ -3610,7 +3623,6 @@ body::after{
   }
   window._isWhitelisted = isWhitelisted;
 
-  // ── 1. MASTER BLACKLIST (65+ domain) ──────────────────────────────────────
   const DEFAULT_BLACKLIST = [
     'googlesyndication','doubleclick','popads','popcash','adsterra',
     'exoclick','juicyads','trafficjunky','propellerads','revcontent',
@@ -3626,7 +3638,7 @@ body::after{
     'trafficstars','adspyglass','hilltopads.net','clickaine',
     'adspree','adtelligent','adyoulike','adskeeper','adpushup',
     'monetag','adnow','popads.net','popcash.net','exoclick.com','onclickads.net',
-    'vdo.ai','clmbtech.com','popads.com','vlyby.com','aniview.com'
+    'vdo.ai','clmbtech.com','popads.com','vlyby.com','aniview.com','streamads'
   ];
 
   function getBlacklist() {
@@ -3641,7 +3653,6 @@ body::after{
     return bl.some(d => url.includes(d));
   }
 
-  // Helper: extract domain dari URL untuk notifikasi
   function extractDomain(url) {
     if (!url) return '';
     try {
@@ -3653,7 +3664,6 @@ body::after{
     }
   }
 
-  // ── 2. COUNTER ───────────────────────────────────────────────────────────
   window._adBlockCount = parseInt(localStorage.getItem('abcx_total_blocked') || '0');
   window._adBlockSession = 0;
 
@@ -3662,324 +3672,154 @@ body::after{
     window._adBlockSession++;
     localStorage.setItem('abcx_total_blocked', window._adBlockCount);
 
-    // Ying: Otomatis tandain domain iklan biar gak muncul lagi sayang
     if (url && !isWhitelisted(url)) {
       const domain = extractDomain(url);
-      if (domain && !DEFAULT_BLACKLIST.includes(domain)) {
+      if (domain && domain.length > 3 && !DEFAULT_BLACKLIST.includes(domain)) {
         let custom = JSON.parse(localStorage.getItem('abcx_custom_blacklist') || '[]');
         if (!custom.includes(domain)) {
           custom.push(domain);
           localStorage.setItem('abcx_custom_blacklist', JSON.stringify(custom));
+          console.log('[Ying Blacklist] NEW DOMAIN BANNED PERMANENTLY:', domain);
         }
       }
     }
     showAdNotif(reason || 'default', url);
   }
 
-  // ── 3. NOTIFICATION STACK (dengan domain info) ────────────────────────────
   const _notifMessages = {
-    popup:    'Popup ke {domain} dihancurkan!',
-    redirect: 'Redirect ke {domain} diblokir!',
-    script:   'Script iklan {domain} dihapus!',
-    overlay:  'Overlay iklan dihapus!',
-    link:     'Link iklan {domain} diblokir!',
-    tab:      'Tab iklan ditutup! Kembali ke ABCxWipe',
-    focus:    'Tab iklan diblokir! Kembali ke ABCxWipe',
-    default:  'Iklan diblokir!'
+    popup:    'Popup tab baru dihancurkan!',
+    redirect: 'Upaya redirect diblokir!',
+    script:   'Script iklan dihapus!',
+    overlay:  'Overlay penutup player dibuang!',
+    link:     'Link tab baru dimatikan!',
+    tab:      'Tab liar ditutup paksa!',
+    default:  'Iklan nakal diblokir!'
   };
 
   function showAdNotif(type, url) {
+    // Ying: Jangan berisik kalo user nggak mau atau kalo cuma overlay biasa sayang
+    if (state && state.settings && state.settings.notifAdblock === false) return;
+
     const stack = document.getElementById('adblock-notif-stack');
     if (!stack) return;
     const domain = url ? extractDomain(url) : '';
     const msgTemplate = _notifMessages[type] || _notifMessages.default;
-    const msg = domain ? msgTemplate.replace('{domain}', domain) : msgTemplate.replace(' ke {domain}','').replace(' {domain}','');
-    const key = type + (domain ? ':'+domain : '');
-    const existing = stack.querySelector('.adblock-notif[data-key="'+key+'"]');
-    if (existing) {
-      const cnt = existing.querySelector('.adblock-notif-count');
-      if (cnt) { cnt.textContent = parseInt(cnt.textContent||'1') + 1; }
-      clearTimeout(existing._timer);
-      existing._timer = setTimeout(() => dismissNotif(existing), 2500);
-      return;
-    }
+    const msg = domain ? msgTemplate.replace('!', ' ('+domain+')') : msgTemplate;
+
     const el = document.createElement('div');
     el.className = 'adblock-notif';
-    el.setAttribute('data-key', key);
-    el.setAttribute('data-type', type);
-    el.innerHTML = '<span class="adblock-notif-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="adblock-notif-text">'+msg+'</span><span class="adblock-notif-count">1</span>';
+    el.innerHTML = '<span class="adblock-notif-icon">🛡️</span><span class="adblock-notif-text">'+msg+'</span>';
     stack.appendChild(el);
-    el._timer = setTimeout(() => dismissNotif(el), 2500);
-    const all = stack.querySelectorAll('.adblock-notif');
-    if (all.length > 4) dismissNotif(all[0]);
+    setTimeout(() => {
+        el.classList.add('fade-out');
+        setTimeout(() => el.remove(), 400);
+    }, 2000);
   }
 
-  function dismissNotif(el) {
-    if (!el || !el.parentNode) return;
-    el.classList.add('fade-out');
-    setTimeout(() => el.remove(), 400);
-  }
+  const _origOpen = window.open;
+  const _fakeWin = {
+      focus: () => {},
+      close: () => {},
+      document: { write: () => {} },
+      location: { href: 'about:blank' }
+  };
 
-  function showAdBlockedIndicator() {
-    const ind = document.getElementById('adblock-indicator');
-    if (!ind) return;
-    ind.classList.add('show');
-    clearTimeout(ind._t);
-    ind._t = setTimeout(() => ind.classList.remove('show'), 2000);
-  }
-  window._showAdBlockedIndicator = showAdBlockedIndicator;
-
-  // ── 4. WINDOW.OPEN KILLER — SUPER AGGRESSIVE ─────────────────────────────
-  const _origOpen = window.open.bind(window);
-  const killOpen = function(url, target, features) {
+  window.open = function(url) {
     if (window._allowOpen) {
       window._allowOpen = false;
-      return _origOpen(url, target, features);
+      const win = _origOpen(url);
+      window._lastOpenedWindow = win;
+      return win;
     }
-    console.log('[NuclearAd v5] Kill attempt to open:', url);
     incrementBlock('popup', url);
-    return null;
+    return _fakeWin;
   };
 
-  try {
-    window.open = killOpen;
-    // Ying: Cegah overwrite dari script jahat
-    Object.defineProperty(window, 'open', { value: killOpen, writable: false, configurable: false });
-  } catch(e) {}
+  try { Object.defineProperty(window, 'open', { writable: false, configurable: false }); } catch(e){}
 
-  // Kill alert/confirm/prompt yang sering dipake iklan buat nahan user
-  window.alert = function(){ return true; };
-  window.confirm = function(){ return true; };
-  window.prompt = function(){ return null; };
+  window.alert = () => true;
+  window.confirm = () => true;
+  window.prompt = () => null;
 
-  // ── 5. DOCUMENT.CREATEELEMENT & APPENDCHILD OVERRIDE ──────────────────────
-  const _origCreateElement = document.createElement.bind(document);
-  document.createElement = function(tag) {
-    const el = _origCreateElement(tag);
-    if (tag.toLowerCase() === 'a') {
-      const _origSetAttr = el.setAttribute.bind(el);
-      el.setAttribute = function(name, value) {
-        if (name === 'target' && value === '_blank' && !el._abcxOwned) {
-          console.log('[NuclearAd v5] Forced target to _self for non-whitelisted element');
-          return _origSetAttr(name, '_self');
-        }
-        if (name === 'href' && value && isAdDomain(value)) {
-          incrementBlock('link', value);
-          return;
-        }
-        return _origSetAttr(name, value);
-      };
-    }
-    return el;
-  };
-
-  // ── 6. REDIRECT JAMMER — BLOCK TOP-LEVEL NAVIGATION ────────────────────
-  window._allowNavigation = false;
   window.onbeforeunload = function() {
     if (!window._allowNavigation) {
-      // Ying: Stop paksa semua usaha redirect keluar aplikasi!
       setTimeout(() => {
         window.stop();
-        showToast('🛡️ Upaya redirect iklan diblokir!', 'error');
+        showToast('🛡️ Upaya tab baru/redirect diblokir!', 'error');
       }, 1);
-      return "ABCxWipe memblokir upaya redirect iklan.";
+      return "ABCxWipe memblokir iklan.";
     }
   };
 
-  // Ying: Gembok location.href biar gak bisa diganti script luar
-  try {
-    const _origHref = Object.getOwnPropertyDescriptor(window.location, 'href');
-    if (_origHref && _origHref.set) {
-      Object.defineProperty(window.location, 'href', {
-        set: function(url) {
-          if (isAdDomain(url) || (!url.includes(window.location.hostname) && !window._allowNavigation)) {
-            console.log('[NuclearAd v6] Blocked location.href redirect:', url);
-            incrementBlock('redirect', url);
-            return;
-          }
-          _origHref.set.call(window.location, url);
-        },
-        get: _origHref.get,
-        configurable: true
-      });
-    }
-  } catch(e) {}
+  window.addEventListener('click', function(e) {
+    const target = e.target;
+    const link = target.closest('a');
+    const style = window.getComputedStyle(target);
 
-  // ── 7. CLICK INTERCEPTOR — CAPTURE PHASE ─────────────────────────────────
-  document.addEventListener('click', function(e) {
-    const link = e.target.closest('a');
-    if (!link) return;
-
-    const href = link.href || link.getAttribute('href') || '';
-    const target = link.getAttribute('target');
-
-    // Ying: Blokir total domain iklan yang terdeteksi
-    if (href && isAdDomain(href)) {
-      e.preventDefault(); e.stopImmediatePropagation();
-      incrementBlock('link', href);
-      return;
+    if (style.cursor === 'pointer' && !target.id && !target.className && !link) {
+        e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+        target.remove();
+        incrementBlock('overlay');
+        return false;
     }
 
-    // Ying: Paksa buka di tab yang sama kecuali link internal ABCxWipe yang Ying tandain
-    if (target === '_blank' || link.hasAttribute('target')) {
-      if (!link._abcxOwned && !isWhitelisted(href)) {
-        console.log('[NuclearAd v5] Hijacked target=_blank click to _self');
-        link.setAttribute('target', '_self');
-        // Kalo bukan whitelisted, Ying paksa buka di window utama aja sayang
-        if (href.startsWith('http')) {
-           e.preventDefault();
-           window.location.href = href;
-        }
-      }
+    if (link && link.target === '_blank') {
+       if (!isWhitelisted(link.href)) {
+           e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+           incrementBlock('link', link.href);
+           return false;
+       }
     }
   }, true);
 
-  // ── 8. AGGRESSIVE FOCUS GUARD & ANTI-TAB-JACK ────────────────────────────
-  window._focusGuardActive = true;
-  window._focusGuardInterval = setInterval(function() {
-    if (window._adGracePeriod) return;
+  setInterval(() => {
+    document.querySelectorAll('*').forEach(el => {
+        // Ying: Skip elemen dasar & yang udah punya ID resmi kita biar nggak salah hapus
+        if (['HTML', 'BODY', 'SCRIPT', 'STYLE', 'NAV', 'SECTION'].includes(el.tagName)) return;
+        if (el.id && el.id.match(/^(navbar|bottom-nav|player-|detail-|toast-|adblock-|sec-|sec-|Sec-|nav-|pcnav-|bnav-|sec-)/)) return;
+        if (el.classList && (el.classList.contains('film-card') || el.classList.contains('skeleton-card') || el.classList.contains('row-wrap') || el.classList.contains('row-scroll'))) return;
 
-    // Ying: Tarik fokus balik secara agresif (100ms)
-    if (!document.hasFocus() && !window._allowOpen) {
-      window.focus();
-      try {
-        if (window._lastOpenedWindow && !window._lastOpenedWindow.closed) {
-          window._lastOpenedWindow.close();
-        }
-      } catch(e){}
-    }
-  }, 100);
+        const s = window.getComputedStyle(el);
+        const z = parseInt(s.zIndex);
 
-  // Intercept window.focus buat mastiin kita selalu di atas
-  const _origFocus = window.focus;
-  window.focus = function() {
-    _origFocus.apply(window);
-    console.log('[NuclearAd v5] Refocused to Main App');
-  };
+        // Ying: Cuma sikat yang bener-bener mencurigakan (transparan tapi nutupin layar atau clickable)
+        if (z > 500 || s.position === 'fixed') {
+            const isInvisible = s.opacity < 0.02 || s.visibility === 'hidden';
+            const isFullLayer = el.offsetWidth > window.innerWidth * 0.5 && el.offsetHeight > window.innerHeight * 0.5;
 
-  // ── 9. VISIBILITYCHANGE — AUTO-RETURN FOCUS ──────────────────────────────
-  document.addEventListener('visibilitychange', function() {
-    if (document.hidden) {
-      if (window._adGracePeriod) return;
-      setTimeout(function() {
-        if (document.hidden && !window._adGracePeriod) {
-          try { window.focus(); } catch(e){}
-          incrementBlock('tab');
-        }
-      }, 100);
-    }
-  });
-
-  // ── 10. BLUR — INSTANT REFOCUS ───────────────────────────────────────────
-  window.addEventListener('blur', function() {
-    if (window._adGracePeriod) return;
-    const detailOpen = document.getElementById('detail-modal') && document.getElementById('detail-modal').classList.contains('open');
-    const playerOpen = document.getElementById('player-modal') && document.getElementById('player-modal').classList.contains('open');
-    if (detailOpen || playerOpen) {
-      setTimeout(function() {
-        if (!window._adGracePeriod) {
-          try { window.focus(); } catch(e){}
-        }
-      }, 100);
-    }
-  });
-
-  // ── 11. POPUP/TAB DETECTION & AUTO-CLOSE ─────────────────────────────────
-  window._openedWindows = [];
-  setInterval(function() {
-    window._openedWindows = window._openedWindows.filter(function(w) {
-      if (!w || w.closed) return false;
-      try {
-        const loc = w.location.href;
-        if (!isWhitelisted(loc)) {
-          w.close();
-          incrementBlock('tab', loc);
-          return false;
-        }
-      } catch(e) {
-        try { w.close(); incrementBlock('tab'); } catch(e2){}
-        return false;
-      }
-      return true;
-    });
-  }, 500);
-
-  // ── 12. MUTATIONOBSERVER — REAL-TIME DOM CLEANER ─────────────────────────
-  const _safeIds = /^(navbar|bottom-nav|detail-modal|player-modal|trailer-modal|settings-modal|lightbox|cast-modal|toast-container|pwa-banner|adblock-indicator|adblock-notif-stack|view-all-page|search-results|search-fullpage|ad-destroyer-overlay|player-click-interceptor|sfp-|ep-|cast-|trailer-|review-|similar-)/;
-
-  const adObserver = new MutationObserver(function(mutations) {
-    mutations.forEach(function(m) {
-      m.addedNodes.forEach(function(node) {
-        if (node.nodeType !== 1) return;
-        const tag = (node.tagName||'').toLowerCase();
-        const src = node.src || node.getAttribute('src') || node.href || node.getAttribute('href') || '';
-
-        if ((tag === 'script' || tag === 'iframe') && src && isAdDomain(src)) {
-          node.remove();
-          incrementBlock('script', src);
-          return;
-        }
-        if (tag === 'link' && src && isAdDomain(src)) { node.remove(); return; }
-        if (tag === 'img' && src && isAdDomain(src)) { node.remove(); return; }
-        try {
-          const style = window.getComputedStyle(node);
-          const zIdx = parseInt(style.zIndex) || 0;
-          if (style.position === 'fixed' && zIdx > 9000) {
-            const id = node.id || '';
-            const cls = node.className || '';
-            if (!_safeIds.test(id) && !cls.includes('toast') && !cls.includes('spinner') && !cls.includes('adblock')) {
-              node.style.display = 'none';
-              node.style.pointerEvents = 'none';
-              incrementBlock('overlay');
+            if (isInvisible && (isFullLayer || s.cursor === 'pointer')) {
+                el.remove();
+                incrementBlock('overlay');
             }
-          }
-        } catch(e) {}
-      });
+        }
     });
+  }, 3000); // Ying: Lambatin dikit scan-nya biar nggak agresif
+
+  window._startFocusGuard = function() {
+    clearInterval(window._focusLoop);
+    window._focusLoop = setInterval(() => {
+        if (!document.hasFocus() && !window._adGracePeriod) {
+            window.focus();
+            if (window._lastOpenedWindow && !window._lastOpenedWindow.closed) {
+                try { window._lastOpenedWindow.close(); } catch(e){}
+            }
+        }
+    }, 20);
+  };
+
+  window._stopFocusGuard = function() {
+    clearInterval(window._focusLoop);
+  };
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !window._adGracePeriod) {
+      window.focus();
+      if (window._lastOpenedWindow) window._lastOpenedWindow.close();
+      incrementBlock('tab');
+    }
   });
-  adObserver.observe(document.body, {childList: true, subtree: true});
 
-  // ── 13. PERIODIC CLEANUP (setiap 5 detik) ────────────────────────────────
-  clearInterval(window._adCleanInterval);
-  window._adCleanInterval = setInterval(function() {
-    const bl = getBlacklist();
-    document.querySelectorAll('script[src],iframe:not(#player-iframe),link[href],img[src]').forEach(function(el) {
-      const src = el.src || el.href || '';
-      if (src && !isWhitelisted(src) && bl.some(function(d){ return src.includes(d); })) { el.remove(); }
-    });
-    document.querySelectorAll('div[style*="position: fixed"],div[style*="position:fixed"]').forEach(function(el) {
-      const id = el.id || '';
-      const cls = el.className || '';
-      if (!_safeIds.test(id) && !cls.includes('toast') && !cls.includes('adblock')) {
-        try {
-          const z = parseInt(window.getComputedStyle(el).zIndex) || 0;
-          if (z > 9000) { el.style.display = 'none'; el.style.pointerEvents = 'none'; }
-        } catch(e) {}
-      }
-    });
-  }, 5000);
-
-  // ── 14. EXPOSE UNTUK SETTINGS ─────────────────────────────────────────────
-  window._adBlockGetBlacklist = getBlacklist;
-  window._adBlockDefaultList = DEFAULT_BLACKLIST;
-  window._adBlockIsDefault = function(d) { return DEFAULT_BLACKLIST.includes(d); };
-  window._adBlockAddCustom = function(domain) {
-    const custom = JSON.parse(localStorage.getItem('abcx_custom_blacklist') || '[]');
-    if (!custom.includes(domain)) {
-      custom.push(domain);
-      localStorage.setItem('abcx_custom_blacklist', JSON.stringify(custom));
-    }
-  };
-  window._adBlockRemoveCustom = function(domain) {
-    const custom = JSON.parse(localStorage.getItem('abcx_custom_blacklist') || '[]');
-    const idx = custom.indexOf(domain);
-    if (idx > -1) {
-      custom.splice(idx, 1);
-      localStorage.setItem('abcx_custom_blacklist', JSON.stringify(custom));
-    }
-  };
-
-  console.log('[NuclearAd v4.0] Anti-Iklan Nuclear AKTIF — ' + getBlacklist().length + ' domain diblokir | window.open FROZEN');
+  console.log('[NuclearAd v6.0] Ying Protector: AKTIF. Auto-Blacklist & Cursor Guard On!');
 })();
 
 
@@ -5508,12 +5348,22 @@ function loadPlayerServer(idx) {
   document.getElementById('player-info-server').textContent = `${server.name} (${server.quality})`;
 
   let url = server.urlFn(id, type, season, episode);
+
+  // Anti-Buffering Accelerator v2.0
+  if (state.settings.turboBuffer !== false) {
+    url += (url.includes('?') ? '&' : '?') + 'boost=' + Date.now();
+  }
+
   // Tambahin parameter waktu kalo ada progres
   if (lastSec > 0) {
     url += (url.includes('?') ? '&' : '?') + 't=' + lastSec;
   }
 
   const iframe = document.getElementById('player-iframe');
+
+  // Set priority attributes for faster buffering
+  iframe.setAttribute('fetchpriority', 'high');
+  iframe.setAttribute('loading', 'eager');
 
   // Update active button
   document.querySelectorAll('#player-server-list .server-btn').forEach((b,i) => b.classList.toggle('active', i===0));
@@ -5613,6 +5463,35 @@ function showAdDestroyer(callback) {
     statusText.textContent = step.msg;
     stepIdx++;
   }, stepInterval);
+}
+
+function fixBuffering() {
+  const iframe = document.getElementById('player-iframe');
+  let url = iframe.src;
+  if (!url || url === 'about:blank') return;
+
+  showToast('🚀 Mengakselerasi koneksi... Harap tunggu!', 'success');
+
+  const {type} = state.currentPlayer;
+  const progress = document.getElementById('playback-progress-slider').value;
+  const duration = type === 'tv' ? 45 * 60 : 120 * 60; // Estimasi durasi
+  const lastSec = Math.floor((progress / 100) * duration);
+
+  // Buat URL baru dengan timestamp dan boost
+  try {
+    let urlObj = new URL(url);
+    urlObj.searchParams.set('boost', Date.now());
+    if (lastSec > 0) urlObj.searchParams.set('t', lastSec);
+
+    iframe.src = 'about:blank';
+    setTimeout(() => {
+      iframe.src = urlObj.toString();
+      showToast('⚡ Koneksi diperbarui! Melanjutkan dari posisi terakhir.', 'success');
+    }, 200);
+  } catch(e) {
+    // Fallback kalo URL parsing gagal
+    iframe.src = url + (url.includes('?') ? '&' : '?') + 'boost=' + Date.now();
+  }
 }
 
 function switchPlayerServer(idx) { loadPlayerServer(idx); }
@@ -6587,6 +6466,9 @@ function handlePlayerFirstClick(e) {
 const UI_LANGS = {
   'id-ID': {
     home:'Beranda', film:'Film', series:'Series', tv:'TV', history:'Riwayat', save:'Simpan',
+    rTrending:'Sedang Populer', rPopMovie:'Film Terpopuler', rPopSeries:'Series Terpopuler',
+    rNewMovie:'Baru Rilis', rTopMovie:'Rating Tertinggi', rTopSeries:'Series Terbaik',
+    rAnime:'Dunia Anime', rAction:'Aksi & Adrenalin', rComedy:'Gelak Tawa', rHorror:'Mencekam',
     search:'Cari film, series...', watch:'Tonton', detail:'Info',
     watched:'Ditonton', saved:'Disimpan', hours:'Jam Nonton', favGenre:'Genre Fav',
     continue:'Lanjutkan Menonton', seeAll:'Lihat Semua', loadMore:'Muat Lebih Banyak',
@@ -6616,6 +6498,9 @@ const UI_LANGS = {
   },
   'en-US': {
     home:'Home', film:'Movies', series:'Series', tv:'TV Shows', history:'History', save:'Watchlist',
+    rTrending:'Trending Now', rPopMovie:'Popular Movies', rPopSeries:'Popular Series',
+    rNewMovie:'New Releases', rTopMovie:'Top Rated Movies', rTopSeries:'Top Rated Series',
+    rAnime:'Anime World', rAction:'Action & Adventure', rComedy:'Comedy Central', rHorror:'Horror Night',
     search:'Search movies...', watch:'Watch Now', detail:'Details',
     watched:'Watched', saved:'Saved', hours:'Watch Time', favGenre:'Top Genre',
     continue:'Continue Watching', seeAll:'See All', loadMore:'Load More',
