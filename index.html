@@ -49,6 +49,27 @@
   --shadow-neon: 0 0 20px rgba(0,245,255,0.3), 0 0 40px rgba(0,245,255,0.1);
   --shadow-pink: 0 0 20px rgba(255,0,128,0.3), 0 0 40px rgba(255,0,128,0.1);
   --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+  --bg-img: none;
+  --bg-opacity: 1;
+}
+
+/* ===== WALLPAPER OVERLAY ===== */
+#bg-wallpaper {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--bg-img);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  opacity: var(--bg-opacity);
+  transition: opacity 0.5s ease, background-image 0.5s ease;
+}
+#bg-wallpaper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 15, 0.6); /* Overlay biar teks tetep kebaca */
 }
 
 /* ===== RESET & BASE ===== */
@@ -86,55 +107,11 @@ body::before{
   background-size:40px 40px;
   pointer-events:none;
   z-index:0;
+  display: var(--grid-display, none); /* Ying: Default matiin garis grid */
 }
 
-/* Custom scrollbar for horizontal areas */
-#detail-cast-scroll, #detail-recs-scroll, .filter-bar, #detail-tabs-nav, #detail-gallery-grid {
-  overflow-x: auto !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: var(--neon-cyan) var(--bg1) !important;
-}
+/* ... (custom scrollbar unchanged) ... */
 
-.row-scroll::-webkit-scrollbar { display: none; }
-.row-scroll { scrollbar-width: none; }
-
-#detail-cast-scroll::-webkit-scrollbar,
-#detail-recs-scroll::-webkit-scrollbar,
-.filter-bar::-webkit-scrollbar,
-#detail-tabs-nav::-webkit-scrollbar,
-#detail-gallery-grid::-webkit-scrollbar {
-  height: 8px !important;
-  display: block !important;
-  background: var(--bg1) !important;
-}
-
-#detail-cast-scroll::-webkit-scrollbar-thumb,
-#detail-recs-scroll::-webkit-scrollbar-thumb,
-.filter-bar::-webkit-scrollbar-thumb,
-#detail-tabs-nav::-webkit-scrollbar-thumb,
-#detail-gallery-grid::-webkit-scrollbar-thumb {
-  background: var(--neon-cyan) !important;
-  border-radius: 10px !important;
-  border: 1px solid var(--bg1) !important;
-  box-shadow: inset 0 0 6px rgba(0, 245, 255, 0.5), 0 0 10px var(--neon-cyan) !important;
-}
-
-#detail-cast-scroll::-webkit-scrollbar-track,
-#detail-recs-scroll::-webkit-scrollbar-track,
-.filter-bar::-webkit-scrollbar-track,
-#detail-tabs-nav::-webkit-scrollbar-track,
-#detail-gallery-grid::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2) !important;
-  border-radius: 10px !important;
-}
-
-.row-scroll, #detail-cast-scroll, .filter-bar, #detail-tabs-nav {
-  cursor: grab;
-}
-
-.row-scroll:active, #detail-cast-scroll:active, .filter-bar:active, #detail-tabs-nav:active {
-  cursor: grabbing;
-}
 body::after{
   content:'';
   position:fixed;
@@ -149,6 +126,7 @@ body::after{
   pointer-events:none;
   z-index:1;
   animation:scanMove 8s linear infinite;
+  display: var(--scanline-display, none); /* Ying: Default matiin garis scanline */
 }
 @keyframes scanMove{
   0%{background-position:0 0}
@@ -395,6 +373,30 @@ body::after{
   overflow:hidden;
   margin-bottom:0;
 }
+.hero-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 245, 255, 0.2);
+  border-radius: 50%;
+  color: var(--neon-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  cursor: pointer;
+  transition: var(--transition);
+  opacity: 0;
+}
+#hero:hover .hero-nav-btn { opacity: 1; }
+.hero-nav-btn:hover { background: rgba(0, 245, 255, 0.2); border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 245, 255, 0.3); }
+.hero-nav-btn.prev { left: 16px; }
+.hero-nav-btn.next { right: 16px; }
+@media (max-width: 768px) { .hero-nav-btn { display: none; } }
 #hero-bg{
   position:absolute;
   inset:0;
@@ -1101,38 +1103,41 @@ body::after{
 .genre-chart{
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:10px;
 }
 .genre-bar-item{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:12px;
 }
 .genre-bar-name{
   font-size:12px;
   color:var(--text2);
-  width:80px;
+  width:90px;
   flex-shrink:0;
+  font-weight:600;
 }
 .genre-bar-track{
   flex:1;
-  height:8px;
+  height:10px;
   background:var(--bg3);
-  border-radius:4px;
+  border-radius:5px;
   overflow:hidden;
+  border:1px solid rgba(255,255,255,0.05);
 }
 .genre-bar-fill{
   height:100%;
   background:linear-gradient(90deg,var(--neon-cyan),var(--neon-pink));
-  border-radius:4px;
-  transition:width 1.2s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow:0 0 6px rgba(0,245,255,0.4);
+  border-radius:5px;
+  transition:width 1s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 0 10px rgba(0,245,255,0.3);
 }
 .genre-bar-count{
   font-size:11px;
-  color:var(--text3);
-  width:24px;
+  color:var(--neon-cyan);
+  width:35px;
   text-align:right;
+  font-weight:800;
 }
 .clear-all-btn{
   display:flex;
@@ -2039,104 +2044,7 @@ body::after{
   border: 2px solid white;
 }
 
-/* Equalizer Styles */
-.eq-container {
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 12px;
-  padding: 15px;
-  margin-top: 10px;
-}
-.eq-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-.eq-title {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--neon-cyan);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.eq-grid {
-  display: flex;
-  justify-content: space-between;
-  height: 120px;
-  padding: 0 5px;
-  gap: 10px;
-}
-.eq-band {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-}
-.eq-slider-wrap {
-  position: relative;
-  height: 100px;
-  width: 4px;
-  background: var(--bg4);
-  border-radius: 2px;
-}
-.eq-slider {
-  -webkit-appearance: none;
-  width: 100px;
-  height: 4px;
-  background: transparent;
-  transform: rotate(-90deg) translate(-48px, 0);
-  position: absolute;
-  top: 0; left: -48px;
-  cursor: pointer;
-  z-index: 2;
-}
-.eq-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px; height: 14px;
-  background: var(--neon-cyan);
-  border-radius: 50%;
-  box-shadow: 0 0 12px var(--neon-cyan), 0 0 20px var(--neon-pink);
-  border: 2px solid white;
-}
-.eq-fill {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: linear-gradient(to top, var(--neon-cyan), var(--neon-pink), var(--neon-purple));
-  border-radius: 2px;
-  pointer-events: none;
-  box-shadow: 0 0 10px rgba(0,245,255,0.5);
-}
-.eq-label {
-  font-size: 8px;
-  color: var(--text3);
-  margin-top: 8px;
-}
-.eq-presets {
-  display: flex;
-  gap: 6px;
-  margin-top: 15px;
-  overflow-x: auto;
-  padding-bottom: 5px;
-}
-.eq-preset-btn {
-  padding: 5px 12px;
-  background: var(--bg3);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 20px;
-  color: var(--text2);
-  font-size: 10px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.eq-preset-btn.active {
-  border-color: var(--neon-cyan);
-  color: var(--neon-cyan);
-  background: rgba(0,245,255,0.05);
-}
-
-/* Floating PiP Mode */
+/* ===== PLAYER MODAL ===== */
 #player-modal.pip-mode {
   background: transparent;
   backdrop-filter: none;
@@ -2606,26 +2514,29 @@ body::after{
 #player-click-interceptor{
   position:absolute;
   inset:0;
-  z-index:10;
+  z-index:20;
   cursor:pointer;
-  background:transparent;
+  background:rgba(0,0,0,0.01); /* Hampir transparan tapi tetep nangkep klik */
   display:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-#player-click-interceptor.active{display:block;}
+#player-click-interceptor.active{display:flex;}
 #player-click-interceptor-hint{
-  position:absolute;
-  bottom:8px;
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(0,245,255,0.15);
+  background:rgba(0,245,255,0.1);
   border:1px solid rgba(0,245,255,0.4);
   border-radius:20px;
-  padding:4px 12px;
-  font-size:10px;
+  padding:6px 16px;
+  font-size:11px;
+  font-weight:700;
   color:var(--neon-cyan);
   white-space:nowrap;
   pointer-events:none;
   animation:pulse 2s infinite;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  backdrop-filter:blur(4px);
 }
 
 /* ===== BLACKLIST MANAGER ===== */
@@ -3036,6 +2947,7 @@ body::after{
 
 <!-- PARTICLES -->
 <div id="particles-bg"></div>
+<div id="bg-wallpaper"></div>
 
 <!-- ANTI-AD INDICATOR (legacy, kept for compat) -->
 <div id="adblock-indicator">
@@ -3128,6 +3040,8 @@ body::after{
       <div id="hero-bg"></div>
       <div id="hero-gradient"></div>
       <div id="hero-scanline"></div>
+      <button class="hero-nav-btn prev" onclick="moveHero(-1)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="hero-nav-btn next" onclick="moveHero(1)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div id="hero-content">
         <div id="hero-badge">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -3395,7 +3309,7 @@ body::after{
         </div>
       </div>
       <!-- TAB: REVIEWS -->
-      <div class="detail-tab-panel" id="tab-reviews">
+      <div class="detail-tab-panel" id="tab-reviews" style="padding: 10px 0;">
         <div id="detail-reviews-wrap"></div>
       </div>
       <!-- TAB: SIMILAR -->
@@ -3443,8 +3357,8 @@ body::after{
             <h3>Server Tidak Tersedia</h3><p>Coba server lain di bawah</p>
             <button id="player-error-btn" onclick="tryNextServer()" style="display:none;">Coba Server Berikutnya</button>
           </div>
-          <div id="player-click-interceptor" class="active" onclick="handlePlayerFirstClick(event)" style="z-index: 20;">
-            <div id="player-click-interceptor-hint">Klik untuk memutar — anti-iklan aktif</div>
+          <div id="player-click-interceptor" class="active" onclick="handlePlayerFirstClick(event)">
+            <div id="player-click-interceptor-hint">🛡️ KLIK UNTUK MEMBERSIHKAN IKLAN</div>
           </div>
           <iframe id="player-iframe"
             allowfullscreen
@@ -3518,47 +3432,6 @@ body::after{
     <div id="player-servers" style="display:none;">
       <div id="player-servers-title">Pilih Server</div>
       <div id="player-server-list"></div>
-    </div>
-
-    <!-- EQUALIZER EDITOR -->
-    <div class="eq-container">
-      <div class="eq-header">
-        <div class="eq-title">Cyber Audio Equalizer</div>
-        <div id="eq-status" style="font-size:10px; color:var(--neon-pink);">Ready</div>
-      </div>
-      <div class="eq-grid">
-        <div class="eq-band">
-          <div class="eq-slider-wrap"><div class="eq-fill" id="eq-fill-0"></div><input type="range" class="eq-slider" min="-24" max="24" value="0" oninput="updateEq(0, this.value)"></div>
-          <div class="eq-label">60Hz</div>
-        </div>
-        <div class="eq-band">
-          <div class="eq-slider-wrap"><div class="eq-fill" id="eq-fill-1"></div><input type="range" class="eq-slider" min="-24" max="24" value="0" oninput="updateEq(1, this.value)"></div>
-          <div class="eq-label">170Hz</div>
-        </div>
-        <div class="eq-band">
-          <div class="eq-slider-wrap"><div class="eq-fill" id="eq-fill-2"></div><input type="range" class="eq-slider" min="-24" max="24" value="0" oninput="updateEq(2, this.value)"></div>
-          <div class="eq-label">310Hz</div>
-        </div>
-        <div class="eq-band">
-          <div class="eq-slider-wrap"><div class="eq-fill" id="eq-fill-3"></div><input type="range" class="eq-slider" min="-24" max="24" value="0" oninput="updateEq(3, this.value)"></div>
-          <div class="eq-label">1kHz</div>
-        </div>
-        <div class="eq-band">
-          <div class="eq-slider-wrap"><div class="eq-fill" id="eq-fill-4"></div><input type="range" class="eq-slider" min="-24" max="24" value="0" oninput="updateEq(4, this.value)"></div>
-          <div class="eq-label">6kHz</div>
-        </div>
-        <div class="eq-band">
-          <div class="eq-slider-wrap"><div class="eq-fill" id="eq-fill-5"></div><input type="range" class="eq-slider" min="-24" max="24" value="0" oninput="updateEq(5, this.value)"></div>
-          <div class="eq-label">16kHz</div>
-        </div>
-      </div>
-      <div class="eq-presets">
-        <button class="eq-preset-btn active" onclick="applyEqPreset('normal', this)">Normal</button>
-        <button class="eq-preset-btn" onclick="applyEqPreset('bass', this)">Bass Boost</button>
-        <button class="eq-preset-btn" onclick="applyEqPreset('vocal', this)">Vocal</button>
-        <button class="eq-preset-btn" onclick="applyEqPreset('movie', this)">Cinematic</button>
-        <button class="eq-preset-btn" onclick="applyEqPreset('clear', this)">Crystal</button>
-      </div>
     </div>
     </div><!-- /player-bottom-area -->
   </div>
@@ -3901,23 +3774,26 @@ body::after{
   };
 
   // ── 6. REDIRECT JAMMER — BLOCK TOP-LEVEL NAVIGATION ────────────────────
+  window._allowNavigation = false;
   window.onbeforeunload = function() {
     if (!window._allowNavigation) {
+      // Ying: Stop paksa semua usaha redirect keluar aplikasi!
       setTimeout(() => {
         window.stop();
-        showToast('Iklan redirect diblokir!', 'error');
+        showToast('🛡️ Upaya redirect iklan diblokir!', 'error');
       }, 1);
       return "ABCxWipe memblokir upaya redirect iklan.";
     }
   };
 
+  // Ying: Gembok location.href biar gak bisa diganti script luar
   try {
     const _origHref = Object.getOwnPropertyDescriptor(window.location, 'href');
     if (_origHref && _origHref.set) {
       Object.defineProperty(window.location, 'href', {
         set: function(url) {
-          if (isAdDomain(url)) {
-            console.log('[NuclearAd v4] Blocked location.href redirect:', url);
+          if (isAdDomain(url) || (!url.includes(window.location.hostname) && !window._allowNavigation)) {
+            console.log('[NuclearAd v6] Blocked location.href redirect:', url);
             incrementBlock('redirect', url);
             return;
           }
@@ -3963,15 +3839,16 @@ body::after{
   window._focusGuardInterval = setInterval(function() {
     if (window._adGracePeriod) return;
 
-    // Ying: Kalo aplikasi kehilangan fokus (kebuka tab baru), langsung tarik balik!
+    // Ying: Tarik fokus balik secara agresif (100ms)
     if (!document.hasFocus() && !window._allowOpen) {
       window.focus();
-      // Kalo masih membandel, Ying stop navigasi tab sebelah
-      if (window._lastOpenedWindow) {
-        try { window._lastOpenedWindow.close(); } catch(e){}
-      }
+      try {
+        if (window._lastOpenedWindow && !window._lastOpenedWindow.closed) {
+          window._lastOpenedWindow.close();
+        }
+      } catch(e){}
     }
-  }, 200);
+  }, 100);
 
   // Intercept window.focus buat mastiin kita selalu di atas
   const _origFocus = window.focus;
@@ -4137,6 +4014,62 @@ let state = {
 };
 
 // ============================================================
+// SOUND & WALLPAPER CONSTANTS
+// ============================================================
+const WALLPAPERS = [
+  { name: 'Default Grid', url: 'none' },
+  { name: 'Neon City', url: 'https://images.unsplash.com/photo-1605142859862-978be7eba909?auto=format&fit=crop&w=1920&q=80' },
+  { name: 'Cyberpunk Alley', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1920&q=80' },
+  { name: 'Digital Rain', url: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=1920&q=80' },
+  { name: 'Abstract Blue', url: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=1920&q=80' },
+  { name: 'Midnight Purple', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80' }
+];
+
+const SOUNDS = {
+  click: {
+    modern: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3',
+    sci: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
+    mechanical: 'https://assets.mixkit.co/active_storage/sfx/2562/2562-preview.mp3',
+    bubbly: 'https://assets.mixkit.co/active_storage/sfx/2577/2577-preview.mp3'
+  }
+};
+
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+function playClickSound() {
+  if (state.settings.soundEnabled === false) return;
+  const type = state.settings.soundPreset || 'modern';
+
+  // Ying: Gunakan Audio object yang baru tiap kali biar nggak delay sayang
+  const audio = new Audio(SOUNDS.click[type]);
+  audio.volume = (state.settings.soundVolume || 50) / 100;
+
+  // Resume context kalo browser nge-block
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+
+  audio.play().catch(e => console.log('Sound blocked:', e));
+}
+
+// Global click sound listener - Ying: Pastikan pemicunya bener sayang
+document.addEventListener('mousedown', (e) => {
+  if (e.target.closest('button, .film-card, .bnav-item, .pc-nav-btn, .settings-tab, .filter-chip, select, input')) {
+    playClickSound();
+  }
+}, true);
+
+function applyWallpaper(url) {
+  const el = document.getElementById('bg-wallpaper');
+  if (url === 'none') {
+    el.style.backgroundImage = 'none';
+    document.body.classList.remove('has-wallpaper');
+  } else {
+    el.style.backgroundImage = `url('${url}')`;
+    document.body.classList.add('has-wallpaper');
+  }
+}
+
+// ============================================================
 // PARTICLES
 // ============================================================
 function initParticles() {
@@ -4294,13 +4227,13 @@ function showSection(name) {
   if (pcnav) pcnav.classList.add('active');
   state.currentSection = name;
   window.scrollTo(0,0);
-  
+
   if (name === 'film' && !state.filmData.items.length) loadFilmGrid();
   if (name === 'series' && !state.seriesData.items.length) loadSeriesGrid();
   if (name === 'tv' && !window._tvLoaded) loadTvSection();
   if (name === 'history') renderHistory();
   if (name === 'watchlist') renderWatchlist();
-  
+
   // Close search
   document.getElementById('search-results').classList.remove('active');
   document.getElementById('nav-search').value = '';
@@ -4341,9 +4274,24 @@ async function tmdb(path, params={}, signal=null) {
 // HERO
 // ============================================================
 async function initHero() {
-  // Ying: Cukup ambil trending week aja biar hemat kuota & loading cepet sayang
-  const data = await tmdb('/trending/all/week');
-  state.heroItems = (data?.results || []).filter(i => i.backdrop_path).slice(0, 10);
+  // Ying: Randomize sumber banner biar makin variatif sayang!
+  const sources = [
+    { path: '/trending/all/week', type: 'mixed' },
+    { path: '/movie/top_rated', type: 'movie' },
+    { path: '/tv/top_rated', type: 'tv' },
+    { path: '/movie/now_playing', type: 'movie' },
+    { path: '/tv/on_the_air', type: 'tv' }
+  ];
+  const source = sources[Math.floor(Math.random() * sources.length)];
+
+  const data = await tmdb(source.path);
+  let items = (data?.results || []).filter(i => i.backdrop_path);
+
+  // Inject media_type kalau sumbernya spesifik movie/tv
+  state.heroItems = items.map(item => ({
+    ...item,
+    media_type: item.media_type || (source.type === 'mixed' ? (item.title ? 'movie' : 'tv') : source.type)
+  })).slice(0, 10);
 
   if (state.heroItems.length) {
     renderHeroDots();
@@ -4379,6 +4327,12 @@ function startHeroTimer() {
   state.heroTimer = setInterval(() => {
     showHero((state.heroIdx + 1) % Math.min(state.heroItems.length, 8));
   }, 6000);
+}
+
+function moveHero(dir) {
+  const total = Math.min(state.heroItems.length, 8);
+  showHero((state.heroIdx + dir + total) % total);
+  startHeroTimer(); // Reset timer
 }
 
 async function watchHero() {
@@ -4420,10 +4374,15 @@ async function initHomeRows() {
   const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   const container = document.getElementById('home-rows');
 
-  container.innerHTML = HOME_ROWS.map((row,i) => {
+  // Ying: Randomize row order biar gak bosen sayang!
+  const shuffledRows = [...HOME_ROWS].sort(() => Math.random() - 0.5);
+
+  container.innerHTML = shuffledRows.map((row,i) => {
     const title = t[row.key] || row.key;
+    // Ying: Randomize page biar isinya ganti-ganti terus!
+    const randomPage = Math.floor(Math.random() * 5) + 1;
     return `
-    <div class="row-wrap" id="row-${i}">
+    <div class="row-wrap" id="row-${i}" data-row-idx="${HOME_ROWS.indexOf(row)}">
       <div class="row-title">
         <div class="row-title-left">${row.icon} ${title}</div>
         <div class="row-nav-group">
@@ -4431,30 +4390,34 @@ async function initHomeRows() {
           <button class="row-nav-btn" onclick="scrollRow(${i}, 1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
         </div>
       </div>
-      <div class="row-scroll" id="row-scroll-${i}">
+      <div class="row-scroll" id="row-scroll-${i}" data-page="${randomPage}">
         ${Array(6).fill('<div class="skeleton-card"><div class="skeleton skeleton-card-img"></div></div>').join('')}
       </div>
     </div>`;
   }).join('');
 
   // Ying: Muat 3 baris pertama dulu biar cepet muncul di layar
-  const criticalRows = HOME_ROWS.slice(0, 3);
-  const remainingRows = HOME_ROWS.slice(3);
-  
-  await Promise.all(criticalRows.map((row, i) => loadRow(row, i)));
+  const criticalRows = shuffledRows.slice(0, 3);
+  const remainingRows = shuffledRows.slice(3);
+
+  await Promise.all(criticalRows.map((row, i) => loadRow(row, i, parseInt(document.getElementById('row-scroll-'+i).dataset.page))));
 
   // Baris sisanya dimuat santai di background
   setTimeout(() => {
-    remainingRows.forEach((row, i) => loadRow(row, i + 3));
+    remainingRows.forEach((row, i) => {
+      const idx = i + 3;
+      loadRow(row, idx, parseInt(document.getElementById('row-scroll-'+idx).dataset.page));
+    });
   }, 1000);
 }
 
 function scrollRow(idx, dir) {
   // Ying: Sekarang tombol ini bakal muat film baru (next page) biar kamu gak bosen!
-  const row = HOME_ROWS[idx];
+  const rowWrap = document.getElementById('row-' + idx);
+  const realIdx = parseInt(rowWrap.dataset.rowIdx);
+  const row = HOME_ROWS[realIdx];
   if (!row) return;
 
-  // Simpan halaman terakhir di elemen
   const scroll = document.getElementById('row-scroll-' + idx);
   if (!scroll) return;
 
@@ -4463,11 +4426,7 @@ function scrollRow(idx, dir) {
   else currentPage = Math.max(1, currentPage - 1);
 
   scroll.dataset.page = currentPage;
-
-  // Tampilkan loading skeleton dulu
   scroll.innerHTML = Array(6).fill('<div class="skeleton-card"><div class="skeleton skeleton-card-img"></div></div>').join('');
-
-  // Muat data baru
   loadRow(row, idx, currentPage);
 }
 
@@ -4478,7 +4437,7 @@ async function loadRow(row, idx, page = 1) {
   const items = data?.results || [];
   const scroll = document.getElementById('row-scroll-'+idx);
   if (!scroll) return;
-  
+
   scroll.dataset.page = page;
 
   if (items.length === 0 && page > 1) {
@@ -4520,14 +4479,38 @@ function updateStats() {
   const history = JSON.parse(localStorage.getItem('abcx_history')||'[]');
   const watchlist = JSON.parse(localStorage.getItem('abcx_watchlist')||'[]');
 
-  // Stats removed from UI as per request
-  return;
+  // Ying: Update angka di riwayat kalau pas lagi dibuka
+  if (state.currentSection === 'history') {
+    renderHistory();
+  }
 }
 
 function animateCounter(id, target) {
   const el = document.getElementById(id);
   if (!el) return;
-  // Counters removed from UI
+
+  let current = 0;
+  const duration = 1000; // 1 detik animasi
+  const startTime = performance.now();
+
+  function update(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+
+    // Efek ease-out biar makin cantik
+    const easeOut = 1 - Math.pow(1 - progress, 3);
+    const value = Math.floor(easeOut * target);
+
+    el.textContent = value;
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    } else {
+      el.textContent = Math.floor(target);
+    }
+  }
+
+  requestAnimationFrame(update);
 }
 
 // ============================================================
@@ -4718,6 +4701,13 @@ async function loadFilmGrid(reset = true) {
              state.filmData.sort === 'new' ? 'primary_release_date.desc' : 'original_title.asc'
   };
 
+  // Ying Hacker Mode: Filter film yang sudah rilis digital (pasti ada di server)
+  if (state.settings.serverSync) {
+    const today = new Date().toISOString().split('T')[0];
+    params['primary_release_date.lte'] = today;
+    params['with_release_type'] = '4|5'; // Digital & Physical release only
+  }
+
   // Ying: Pake filter yang kesimpen di state, bukan global UI state
   const f = state.filmData.filters;
   if (f.genre) params.with_genres = f.genre;
@@ -4762,6 +4752,12 @@ async function loadSeriesGrid(reset = true) {
              state.seriesData.sort === 'rating' ? 'vote_average.desc' :
              state.seriesData.sort === 'new' ? 'first_air_date.desc' : 'original_name.asc'
   };
+
+  // Ying Hacker Mode: Filter series yang sudah tayang
+  if (state.settings.serverSync) {
+    const today = new Date().toISOString().split('T')[0];
+    params['first_air_date.lte'] = today;
+  }
 
   // Ying: Pake filter yang kesimpen di state, jangan kecampur
   const f = state.seriesData.filters;
@@ -4868,13 +4864,13 @@ async function openViewAll(title, type, path, params={}) {
   document.getElementById('view-all-title').textContent = title;
   document.getElementById('view-all-grid').innerHTML = '';
   document.getElementById('view-all-page').classList.add('active');
-  
+
   // Render genre filter
   const genres = type==='movie'?GENRES_MOVIE:type==='tv'?GENRES_TV:[];
   const vaBar = document.getElementById('va-filter-bar');
   vaBar.innerHTML = `<button class="filter-btn active" onclick="filterViewAll(null,this)">Semua</button>` +
     genres.map(g => `<button class="filter-btn" onclick="filterViewAll(${g.id},this)">${g.name}</button>`).join('');
-  
+
   await loadViewAllPage();
   initViewAllInfiniteScroll();
 }
@@ -4890,7 +4886,7 @@ async function loadViewAllPage() {
   state.viewAll.filtered = [...state.viewAll.items];
   state.viewAll.page++;
   document.getElementById('view-all-count').textContent = state.viewAll.items.length + ' item';
-  
+
   const grid = document.getElementById('view-all-grid');
   const type = state.viewAll.type;
   items.forEach(item => {
@@ -5078,6 +5074,22 @@ async function openDetail(id, type) {
           <img class="film-card-img" src="${IMG_BASE+'w185'+item.poster_path}" loading="lazy">
           <div class="film-card-overlay"><div class="film-card-title" style="font-size:9px;">${item.title||item.name}</div></div>
         </div>`).join('');
+
+      // Ying: Render Galeri Screenshot biar makin cakep sesuai API sayang
+      const backdrops = (images?.backdrops || []).slice(0, 9);
+      const galleryGrid = document.getElementById('detail-gallery-grid');
+      window._galleryImgs = backdrops.map(img => IMG_BASE + 'w780' + img.file_path);
+
+      if (backdrops.length > 0) {
+        document.getElementById('detail-gallery-wrap').style.display = 'block';
+        galleryGrid.innerHTML = backdrops.map((img, idx) => `
+          <img class="gallery-item" src="${IMG_BASE + 'w300' + img.file_path}"
+               onclick="openLightbox(${idx})" loading="lazy"
+               onerror="this.style.display='none'">
+        `).join('');
+      } else {
+        document.getElementById('detail-gallery-wrap').style.display = 'none';
+      }
     });
 
   } catch(err) {
@@ -5172,7 +5184,7 @@ function closeDetail(fromPop = false) {
   const playerIframe = document.getElementById('player-iframe');
   const playerModal = document.getElementById('player-modal');
   const isPlayerActive = playerModal && playerModal.classList.contains('open') && playerIframe && playerIframe.src && playerIframe.src !== 'about:blank';
-  
+
   if (isPlayerActive && state.currentDetail) {
     const d = state.currentDetail;
     const detail = d.detail || {};
@@ -5185,7 +5197,7 @@ function closeDetail(fromPop = false) {
       backdrop: detail.backdrop_path ? IMG_BASE + 'w780' + detail.backdrop_path : '',
     });
   }
-  
+
   document.getElementById('detail-modal').classList.remove('open');
   document.body.style.overflow = '';
   // NOTE: Do NOT abort _detailAbortCtrl here!
@@ -5204,14 +5216,14 @@ async function switchDetailTab(tab, btn) {
   // Update active panel
   document.querySelectorAll('.detail-tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  
+
   // Lazy load tab content
   if (window._tabLoaded && window._tabLoaded[tab]) return;
   if (window._tabLoaded) window._tabLoaded[tab] = true;
-  
+
   const id = window._detailId;
   const type = window._detailType;
-  
+
   if (tab === 'trailer') await renderTabTrailer();
   else if (tab === 'cast') await renderTabCast(id, type);
   else if (tab === 'reviews') await renderTabReviews(id, type);
@@ -5236,13 +5248,13 @@ async function renderTabTrailer() {
   const teasers = videos.filter(v => v.site === 'YouTube' && v.type === 'Teaser');
   const others = videos.filter(v => v.site === 'YouTube' && v.type !== 'Trailer' && v.type !== 'Teaser');
   const allVids = [...trailers, ...teasers, ...others];
-  
+
   if (allVids.length === 0) {
     wrap.innerHTML = `<div class="tab-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>${t.emptyTrailer}</div>`;
     allWrap.innerHTML = '';
     return;
   }
-  
+
   wrap.innerHTML = `<div class="detail-section-title" style="margin-bottom:10px;">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
     Semua Video (${allVids.length})
@@ -5274,10 +5286,10 @@ async function renderTabCast(id, type) {
 
   castWrap.innerHTML = `<div class="tab-loading"><div class="spinner"></div>Memuat pemeran...</div>`;
   crewWrap.innerHTML = '';
-  
+
   const cast = (credits?.cast || []);
   const crew = (credits?.crew || []);
-  
+
   if (cast.length === 0) {
     castWrap.innerHTML = `<div class="tab-empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>${t.emptyCast}</div>`;
   } else {
@@ -5290,14 +5302,14 @@ async function renderTabCast(id, type) {
       </div>`;
     }).join('');
   }
-  
+
   // Crew — Director, Writer, Producer, Composer
   const crewRoles = ['Director','Screenplay','Writer','Producer','Original Music Composer','Director of Photography'];
   const crewFiltered = crewRoles.map(role => {
     const found = crew.filter(c => c.job === role || c.department === role).slice(0,2);
     return found.length ? {role, names: found.map(c=>c.name).join(', ')} : null;
   }).filter(Boolean);
-  
+
   if (crewFiltered.length > 0) {
     crewWrap.innerHTML = `<div class="crew-grid">${crewFiltered.map(c => `
       <div class="crew-item">
@@ -5311,20 +5323,20 @@ async function renderTabCast(id, type) {
 
 // ---- TAB: REVIEWS ----
 async function renderTabReviews(id, type) {
-  const wrap = document.getElementById('tab-reviews');
+  const wrap = document.getElementById('detail-reviews-wrap');
   const lang = state.settings.language || 'id-ID';
   const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
-  wrap.innerHTML = `<div class="tab-loading"><div class="spinner"></div>Memuat ulasan...</div>`;
-  
+  if (wrap) wrap.innerHTML = `<div class="tab-loading"><div class="spinner"></div>Memuat ulasan...</div>`;
+
   const data = await tmdb(`/${type}/${id}/reviews`);
   const reviews = data?.results || [];
-  
+
   if (reviews.length === 0) {
-    wrap.innerHTML = `<div class="tab-empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>${t.emptyReviews}</div>`;
+    if (wrap) wrap.innerHTML = `<div class="tab-empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>${t.emptyReviews}</div>`;
     return;
   }
-  
-  wrap.innerHTML = reviews.slice(0, 10).map((r, idx) => {
+
+  if (wrap) wrap.innerHTML = reviews.slice(0, 20).map((r, idx) => {
     const avatar = r.author_details?.avatar_path
       ? (r.author_details.avatar_path.startsWith('/http') ? r.author_details.avatar_path.slice(1) : 'https://image.tmdb.org/t/p/w45'+r.author_details.avatar_path)
       : `https://ui-avatars.com/api/?name=${encodeURIComponent(r.author||'U')}&background=0a0a0f&color=00f5ff&size=36`;
@@ -5332,6 +5344,7 @@ async function renderTabReviews(id, type) {
     const stars = rating ? '⭐'.repeat(Math.round(rating/2)) : '';
     const date = r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID',{year:'numeric',month:'short',day:'numeric'}) : '';
     const content = (r.content||'').replace(/</g,'&lt;');
+
     return `<div class="review-card">
       <div class="review-header">
         <img class="review-avatar" src="${avatar}" alt="${r.author}" onerror="this.src='https://via.placeholder.com/36x36/111118/00f5ff?text=U'">
@@ -5365,22 +5378,22 @@ async function renderTabSimilar(id, type) {
   const lang = state.settings.language || 'id-ID';
   const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
   grid.innerHTML = `<div class="tab-loading"><div class="spinner"></div>Memuat rekomendasi...</div>`;
-  
+
   const [similar, recs] = await Promise.all([
     tmdb(`/${type}/${id}/similar`),
     tmdb(`/${type}/${id}/recommendations`),
   ]);
-  
+
   const items = [...(recs?.results||[]), ...(similar?.results||[])];
   // Deduplicate by id
   const seen = new Set();
   const unique = items.filter(i => { if(seen.has(i.id)) return false; seen.add(i.id); return true; }).slice(0, 18);
-  
+
   if (unique.length === 0) {
     grid.innerHTML = `<div class="tab-empty"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8"/></svg>${t.emptySimilar}</div>`;
     return;
   }
-  
+
   grid.className = 'similar-grid';
   grid.innerHTML = unique.map(item => {
     const t = item.media_type || type;
@@ -5483,7 +5496,7 @@ function loadPlayerServer(idx) {
   const {id, type, season, episode} = state.currentPlayer;
   const server = SERVERS[0]; // Paksa 2Embed sayang
   if (!server) return;
-  
+
   // Ambil waktu terakhir buat resume
   const cw = JSON.parse(localStorage.getItem('abcx_cw')||'[]');
   const item = cw.find(i => i.id === id && i.type === type);
@@ -5493,7 +5506,7 @@ function loadPlayerServer(idx) {
   document.getElementById('player-loading').style.display = 'flex';
   document.getElementById('player-error').style.display = 'none';
   document.getElementById('player-info-server').textContent = `${server.name} (${server.quality})`;
-  
+
   let url = server.urlFn(id, type, season, episode);
   // Tambahin parameter waktu kalo ada progres
   if (lastSec > 0) {
@@ -5517,13 +5530,13 @@ function loadPlayerServer(idx) {
       document.getElementById('player-loading').style.display = 'none';
       if (window._startFocusGuard) window._startFocusGuard();
     }, 300);
-    
+
     clearTimeout(window._srvTimeout);
     window._srvTimeout = setTimeout(() => {
       const banner = document.getElementById('srv-timeout-banner');
       if (banner) banner.style.display = 'flex';
     }, 15000);
-    
+
     iframe.onload = () => {
       clearTimeout(window._srvTimeout);
       const banner = document.getElementById('srv-timeout-banner');
@@ -5633,44 +5646,6 @@ function playerFullscreen() {
   if (iframe.requestFullscreen) iframe.requestFullscreen();
   else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
 }
-
-// EQUALIZER ENGINE
-let audioCtx, eqBands = [];
-const PRESETS = {
-  normal: [0, 0, 0, 0, 0, 0],
-  bass: [18, 12, 6, 0, -6, -12],
-  vocal: [-6, 0, 10, 18, 6, 0],
-  movie: [12, 6, 0, 6, 12, 18],
-  clear: [-12, -6, 0, 6, 15, 24]
-};
-
-function initEq() {
-  document.getElementById('eq-status').textContent = 'ACTIVE';
-}
-
-function updateEq(idx, val) {
-  const fill = document.getElementById(`eq-fill-${idx}`);
-  const height = ((parseFloat(val) + 24) / 48) * 100;
-  fill.style.height = height + '%';
-}
-
-function applyEqPreset(name, btn) {
-  const vals = PRESETS[name];
-  if (!vals) return;
-  document.querySelectorAll('.eq-preset-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const sliders = document.querySelectorAll('.eq-slider');
-  vals.forEach((v, i) => {
-    sliders[i].value = v;
-    updateEq(i, v);
-  });
-  showToast(`Preset ${name.toUpperCase()} diterapkan`, 'success');
-}
-
-// Inisialisasi awal slider fill
-setTimeout(() => {
-  document.querySelectorAll('.eq-slider').forEach((s, i) => updateEq(i, s.value));
-}, 1000);
 
 function applyPlayerFilter() {
   const b = document.getElementById('brightness-slider').value;
@@ -5791,7 +5766,7 @@ function updatePlaybackProgress(progress) {
     type: state.currentPlayer.type,
     title: d.title || d.name || 'Film',
     poster: d.poster_path ? IMG_BASE+'w342'+d.poster_path : '',
-    progress: progress,
+    progress: Number(progress),
     lastTime: timeStr,
     updatedAt: Date.now()
   };
@@ -5819,7 +5794,7 @@ function updatePlaybackProgress(progress) {
 
 function renderHistory() {
   const history = JSON.parse(localStorage.getItem('abcx_history')||'[]');
-  
+
   const now = Date.now();
   const formatRelative = (ts) => {
     const diff = Math.floor((now - ts) / 60000);
@@ -5833,32 +5808,49 @@ function renderHistory() {
   // Stats
   const today = new Date().toDateString();
   const todayCount = history.filter(h => new Date(h.watchedAt).toDateString()===today).length;
-  const hours = (history.reduce((acc, h) => acc + (h.progress || 0), 0) / 100 * 1.5).toFixed(1);
-  const genreCount = {};
-  history.forEach(h => (h.genres||[]).forEach(g => genreCount[g] = (genreCount[g]||0)+1));
-  const topGenre = Object.entries(genreCount).sort((a,b)=>b[1]-a[1])[0];
-  
+
+  // Ying: Hitung total menit tontonan (asumsi 1 film = 90 menit)
+  const totalMinutes = history.reduce((acc, h) => acc + (Number(h.progress || 0) / 100 * 90), 0);
+  const hrs = Math.floor(totalMinutes / 60);
+  const mins = Math.round(totalMinutes % 60);
+
+  const watchTimeStr = hrs > 0 ? `${hrs}j ${mins}m` : `${mins}m`;
+
   animateCounter('hs-total', history.length);
-  document.getElementById('hs-hours').textContent = hours+'j';
+  document.getElementById('hs-hours').textContent = watchTimeStr;
   animateCounter('hs-today', todayCount);
-  document.getElementById('hs-genre').textContent = topGenre ? topGenre[0] : '-';
-  
-  // Weekly chart
-  const days = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
-  const weekData = Array(7).fill(0);
+
+  // Ying: Itung genre paling pinter
+  const genreCount = {};
   history.forEach(h => {
-    const diff = Math.floor((now - h.watchedAt) / 86400000);
-    if (diff < 7) weekData[6-diff]++;
+    (h.genres||[]).forEach(g => {
+      genreCount[g] = (genreCount[g]||0) + 1;
+    });
   });
-  const maxW = Math.max(...weekData, 1);
-  document.getElementById('weekly-chart').innerHTML = weekData.map((v,i) => {
-    const pct = Math.round((v/maxW)*100);
-    const d = new Date(now - (6-i)*86400000);
-    return `<div class="bar-item">
-      <div class="bar-fill" style="height:${Math.max(4, pct)}%;"></div>
-      <div class="bar-label">${days[d.getDay()]}</div>
-    </div>`;
-  }).join('');
+
+  const sortedGenres = Object.entries(genreCount).sort((a,b)=>b[1]-a[1]);
+  const topGenre = sortedGenres[0];
+  document.getElementById('hs-genre').textContent = topGenre ? topGenre[0] : '-';
+
+  // Render Genre Chart (Ying Fix: Show actual counts!)
+  const genreChart = document.getElementById('genre-chart');
+  if (sortedGenres.length > 0) {
+    const maxVal = sortedGenres[0][1];
+    genreChart.innerHTML = sortedGenres.slice(0, 6).map(([name, count]) => {
+      const pct = (count / maxVal) * 100;
+      return `<div class="genre-bar-item">
+        <div class="genre-bar-name">${name}</div>
+        <div class="genre-bar-track"><div class="genre-bar-fill" style="width:${pct}%"></div></div>
+        <div class="genre-bar-count">${count}x</div>
+      </div>`;
+    }).join('');
+  } else {
+    genreChart.innerHTML = '<div style="text-align:center;padding:10px;color:var(--text4);">Belum ada data genre</div>';
+  }
+
+  // Hapus weekly chart karena user gak butuh
+  const weeklySection = document.getElementById('weekly-chart')?.closest('.chart-section');
+  if (weeklySection) weeklySection.style.display = 'none';
 
   // History list
   const list = document.getElementById('history-list');
@@ -5937,7 +5929,7 @@ async function doSearch(q) {
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text3);">Tidak ditemukan</div>';
     return;
   }
-  grid.innerHTML = items.map(item => {
+    grid.innerHTML = items.map(item => {
     const type = item.media_type;
     if (type === 'person') return '';
     const title = item.title||item.name||'';
@@ -6125,7 +6117,7 @@ async function openCastModal(personId, name, photo, dept) {
   document.getElementById('cast-modal-dept').textContent = dept;
   document.getElementById('cast-modal-photo').src = photo;
   document.getElementById('cast-modal-films').innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
-  
+
   const data = await tmdb(`/person/${personId}/combined_credits`);
   const films = (data?.cast||[]).sort((a,b)=>(b.popularity||0)-(a.popularity||0)).slice(0,12);
   document.getElementById('cast-modal-films').innerHTML = films.map(f => {
@@ -6300,6 +6292,16 @@ function clearMemoryCache() {
   renderSettingsContent('cache');
 }
 
+function togglePureBlack(on) {
+  if (on) {
+    document.documentElement.style.setProperty('--bg0', '#000000');
+    document.documentElement.style.setProperty('--bg1', '#050505');
+  } else {
+    document.documentElement.style.setProperty('--bg0', '#0a0a0f');
+    document.documentElement.style.setProperty('--bg1', '#0d0d14');
+  }
+}
+
 function renderSettingsContent(tab) {
   const lang = state.settings.language || 'id-ID';
   const t = UI_LANGS[lang] || UI_LANGS['id-ID'];
@@ -6354,21 +6356,48 @@ function renderSettingsContent(tab) {
       </div>
       <div class="settings-item">
         <div class="settings-item-info"><div class="settings-item-label">${t.sDark}</div><div class="settings-item-desc">${t.sDarkDesc}</div></div>
-        <label class="toggle"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label>
+        <label class="toggle"><input type="checkbox" ${s.pureBlack?'checked':''} onchange="saveSetting('pureBlack',this.checked);togglePureBlack(this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="settings-item">
+        <div class="settings-item-info"><div class="settings-item-label">${t.sWallpaper}</div><div class="settings-item-desc">${t.sWallpaperDesc}</div></div>
+        <select class="sort-select" onchange="saveSetting('wallpaperUrl',this.value);applyWallpaper(this.value)">
+          ${WALLPAPERS.map(w=>`<option value="${w.url}" ${s.wallpaperUrl===w.url?'selected':''}>${w.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="settings-item">
+        <div class="settings-item-info"><div class="settings-item-label">${t.sSound}</div><div class="settings-item-desc">${t.sSoundDesc}</div></div>
+        <label class="toggle"><input type="checkbox" ${s.soundEnabled!==false?'checked':''} onchange="saveSetting('soundEnabled',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="settings-item" style="display:${s.soundEnabled!==false?'flex':'none'};">
+        <div class="settings-item-info"><div class="settings-item-label">${t.sSoundPreset}</div></div>
+        <select class="sort-select" onchange="saveSetting('soundPreset',this.value);playClickSound()">
+          <option value="modern" ${s.soundPreset==='modern'?'selected':''}>Modern Blip</option>
+          <option value="sci" ${s.soundPreset==='sci'?'selected':''}>Sci-Fi Tech</option>
+          <option value="mechanical" ${s.soundPreset==='mechanical'?'selected':''}>Mechanical</option>
+          <option value="bubbly" ${s.soundPreset==='bubbly'?'selected':''}>Bubbly</option>
+        </select>
       </div>
       <div class="settings-item">
         <div class="settings-item-info"><div class="settings-item-label">${t.sPart}</div><div class="settings-item-desc">${t.sPartDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.particles!==false?'checked':''} onchange="saveSetting('particles',this.checked);toggleParticles(this.checked)"><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
+        <div class="settings-item-info"><div class="settings-item-label">Garis Grid</div><div class="settings-item-desc">Tampilkan garis kotak-kotak di latar belakang</div></div>
+        <label class="toggle"><input type="checkbox" ${s.grid?'checked':''} onchange="saveSetting('grid',this.checked);toggleGrid(this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="settings-item">
         <div class="settings-item-info"><div class="settings-item-label">${t.sScan}</div><div class="settings-item-desc">${t.sScanDesc}</div></div>
-        <label class="toggle"><input type="checkbox" ${s.scanline!==false?'checked':''} onchange="saveSetting('scanline',this.checked);toggleScanline(this.checked)"><span class="toggle-slider"></span></label>
+        <label class="toggle"><input type="checkbox" ${s.scanline?'checked':''} onchange="saveSetting('scanline',this.checked);toggleScanline(this.checked)"><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
         <div class="settings-item-info"><div class="settings-item-label">${t.sAnim}</div><div class="settings-item-desc">${t.sAnimDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.animations!==false?'checked':''} onchange="saveSetting('animations',this.checked)"><span class="toggle-slider"></span></label>
       </div>`,
     player: `
+      <div class="settings-item">
+        <div class="settings-item-info"><div class="settings-item-label">Smart Server Sync</div><div class="settings-item-desc">Hanya tampilkan film yang pasti tersedia (Sudah Rilis Digital)</div></div>
+        <label class="toggle"><input type="checkbox" ${s.serverSync?'checked':''} onchange="saveSetting('serverSync',this.checked); showToast('Filter server aktif! Memuat ulang...','success'); setTimeout(()=>location.reload(),1000)"><span class="toggle-slider"></span></label>
+      </div>
       <div class="settings-item">
         <div class="settings-item-info"><div class="settings-item-label">${t.sAuto}</div><div class="settings-item-desc">${t.sAutoDesc}</div></div>
         <label class="toggle"><input type="checkbox" ${s.autoplay?'checked':''} onchange="saveSetting('autoplay',this.checked)"><span class="toggle-slider"></span></label>
@@ -6534,23 +6563,24 @@ function blRemoveDomain(domain) {
 }
 
 // ── CLICK INTERCEPTOR HANDLER ─────────────────────────────
-let _playerClickCount = 0;
 function handlePlayerFirstClick(e) {
-  // Ying: Langsung matikan interseptor di klik pertama buat ponsel
-  // tapi tetap jebak popup-nya
+  // Ying: Jebak klik pertama, matikan overlay, tunjukkan status bersih
   e.preventDefault();
   e.stopPropagation();
 
   const interceptor = document.getElementById('player-click-interceptor');
   if (interceptor) {
+    interceptor.style.opacity = '0';
     interceptor.style.pointerEvents = 'none';
-    interceptor.classList.remove('active');
     setTimeout(() => {
+      interceptor.classList.remove('active');
       interceptor.style.display = 'none';
-    }, 100);
+    }, 300);
   }
 
-  showToast('🛡️ Anti-Iklan Aktif! Silakan tekan Play sekarang.', 'success');
+  showToast('🚀 Area Bersih! Silakan tekan Play sekarang, Sayang.', 'success');
+
+  // Ying: Paksa fokus balik ke window utama biar popup nggak punya celah
   window.focus();
 }
 
@@ -6570,7 +6600,8 @@ const UI_LANGS = {
     fStudio:'Studio', fCountry:'Negara', fLang:'Bahasa', fBudget:'Anggaran',
     emptyTrailer:'Trailer tidak tersedia untuk konten ini.', emptyCast:'Data pemeran tidak tersedia.', emptyReviews:'Belum ada ulasan untuk konten ini.', emptySimilar:'Tidak ada rekomendasi serupa.',
     sTitle:'Pengaturan', sTampilan:'Tampilan', sPlayer:'Player', sAdblock:'Anti-Iklan', sData:'Data', sNotif:'Notifikasi', sDev:'Developer', sCache:'Cache', sAbout:'Tentang',
-    sLang:'Bahasa TMDB', sLangDesc:'Ganti bahasa metadata film (judul, sinopsis)', sDark:'Tema Gelap', sDarkDesc:'Selalu aktif (cyberpunk mode)', sPart:'Efek Partikel', sPartDesc:'Animasi partikel di background', sScan:'Efek Scanline', sScanDesc:'Garis scanline cyberpunk', sAnim:'Animasi Smooth', sAnimDesc:'Transisi dan animasi halus',
+    sLang:'Bahasa TMDB', sLangDesc:'Ganti bahasa metadata film (judul, sinopsis)', sDark:'Tema Hitam Pekat', sDarkDesc:'Matikan efek biru cyberpunk untuk layar OLED', sPart:'Efek Partikel', sPartDesc:'Animasi partikel di background', sScan:'Efek Scanline', sScanDesc:'Garis scanline cyberpunk', sAnim:'Animasi Smooth', sAnimDesc:'Transisi dan animasi halus',
+    sWallpaper:'Latar Belakang', sWallpaperDesc:'Pilih preset wallpaper cyberpunk', sSound:'Suara Klik', sSoundDesc:'Efek suara tiap kali menekan tombol', sSoundPreset:'Preset Suara', sVolume:'Volume Suara',
     sAuto:'Auto-play Berikutnya', sAutoDesc:'Otomatis putar episode berikutnya', sSrv:'Server Default', sSrvDesc:'Server yang digunakan pertama kali',
     sClearH:'Hapus Riwayat', sClearHDesc:'Hapus semua riwayat tontonan', sClearW:'Hapus Daftar Simpan', sClearWDesc:'Hapus semua film yang disimpan', sReset:'Reset Semua Data', sResetDesc:'Hapus semua data lokal', sDel:'Hapus',
     sNotifAd:'Notifikasi Blokir Iklan', sNotifAdDesc:'Tampilkan notifikasi saat iklan diblokir', sNotifSys:'Notifikasi Sistem', sNotifSysDesc:'Notifikasi dari browser (jika diizinkan)', sNotifSnd:'Suara Notifikasi', sNotifSndDesc:'Bunyi saat notifikasi muncul',
@@ -6598,7 +6629,8 @@ const UI_LANGS = {
     fStudio:'Studio', fCountry:'Country', fLang:'Language', fBudget:'Budget',
     emptyTrailer:'Trailer not available for this content.', emptyCast:'Cast data not available.', emptyReviews:'No reviews yet for this content.', emptySimilar:'No similar recommendations.',
     sTitle:'Settings', sTampilan:'Appearance', sPlayer:'Player', sAdblock:'Anti-Ad', sData:'Data', sNotif:'Notifications', sDev:'Developer', sCache:'Cache', sAbout:'About',
-    sLang:'TMDB Language', sLangDesc:'Change movie metadata language (title, synopsis)', sDark:'Dark Theme', sDarkDesc:'Always active (cyberpunk mode)', sPart:'Particle Effects', sPartDesc:'Background particle animations', sScan:'Scanline Effect', sScanDesc:'Cyberpunk scanline lines', sAnim:'Smooth Animation', sAnimDesc:'Smooth transitions and animations',
+    sLang:'TMDB Language', sLangDesc:'Change movie metadata language (title, synopsis)', sDark:'Pure Black Mode', sDarkDesc:'Turn off cyberpunk blue effects for OLED', sPart:'Particle Effects', sPartDesc:'Background particle animations', sScan:'Scanline Effect', sScanDesc:'Cyberpunk scanline lines', sAnim:'Smooth Animation', sAnimDesc:'Smooth transitions and animations',
+    sWallpaper:'Background Wallpaper', sWallpaperDesc:'Choose a cyberpunk background preset', sSound:'Click Sound', sSoundDesc:'Sound effect when clicking elements', sSoundPreset:'Sound Preset', sVolume:'Sound Volume',
     sAuto:'Next Auto-play', sAutoDesc:'Automatically play next episode', sSrv:'Default Server', sSrvDesc:'Server used first time',
     sClearH:'Clear History', sClearHDesc:'Delete all watch history', sClearW:'Clear Watchlist', sClearWDesc:'Delete all saved movies', sReset:'Reset All Data', sResetDesc:'Delete all local data', sDel:'Delete',
     sNotifAd:'Adblock Notifications', sNotifAdDesc:'Show notification when ad is blocked', sNotifSys:'System Notifications', sNotifSysDesc:'Browser notifications (if allowed)', sNotifSnd:'Notification Sound', sNotifSndDesc:'Sound when notification appears',
@@ -6626,7 +6658,8 @@ const UI_LANGS = {
     fStudio:'スタジオ', fCountry:'国', fLang:'言語', fBudget:'予算',
     emptyTrailer:'このコンテンツの予告編はありません。', emptyCast:'キャスト情報がありません。', emptyReviews:'レビューはまだありません。', emptySimilar:'似たようなおすすめはありません。',
     sTitle:'設定', sTampilan:'表示', sPlayer:'プレイヤー', sAdblock:'広告ブロック', sData:'データ', sNotif:'通知', sDev:'開発者', sCache:'キャッシュ', sAbout:'詳細',
-    sLang:'TMDB言語', sLangDesc:'メタデータの言語を変更', sDark:'ダークテーマ', sDarkDesc:'常に有効', sPart:'パーティクル', sPartDesc:'背景アニメーション', sScan:'スキャンライン', sScanDesc:'サイバーパンク効果', sAnim:'スムーズアニメ', sAnimDesc:'滑らかな遷移',
+    sLang:'TMDB言語', sLangDesc:'メタデータの言語を変更', sDark:'ピュアブラック', sDarkDesc:'OLED向けの黒色モード', sPart:'パーティクル', sPartDesc:'背景アニメーション', sScan:'スキャンライン', sScanDesc:'サイバーパンク効果', sAnim:'スムーズアニメ', sAnimDesc:'滑らかな遷移',
+    sWallpaper:'壁紙', sWallpaperDesc:'背景のプリセットを選択', sSound:'クリック音', sSoundDesc:'ボタンを押す時の音', sSoundPreset:'サウンドセット', sVolume:'音量',
     sAuto:'自動再生', sAutoDesc:'次のエピソードを再生', sSrv:'デフォルトサーバ', sSrvDesc:'優先サーバ',
     sClearH:'履歴削除', sClearHDesc:'視聴履歴をすべて削除', sClearW:'リスト削除', sClearWDesc:'保存した作品を削除', sReset:'全データリセット', sResetDesc:'ローカルデータを削除', sDel:'削除',
     sNotifAd:'広告通知', sNotifAdDesc:'ブロック時に通知', sNotifSys:'システム通知', sNotifSysDesc:'ブラウザ通知', sNotifSnd:'通知音', sNotifSndDesc:'通知時の音',
@@ -6654,7 +6687,8 @@ const UI_LANGS = {
     fStudio:'제작사', fCountry:'국가', fLang:'언어', fBudget:'예산',
     emptyTrailer:'이 콘텐츠의 예고편이 없습니다.', emptyCast:'출연진 정보가 없습니다.', emptyReviews:'리뷰가 없습니다.', emptySimilar:'비슷한 추천 콘텐츠가 없습니다.',
     sTitle:'설정', sTampilan:'화면', sPlayer:'플레이어', sAdblock:'광고 차단', sData:'데이터', sNotif:'알림', sDev:'개발자', sCache:'캐시', sAbout:'정보',
-    sLang:'TMDB 언어', sLangDesc:'메타데이터 언어 변경', sDark:'다크 모드', sDarkDesc:'항상 활성화', sPart:'파티클 효과', sPartDesc:'배경 애니메이션', sScan:'스캔라인', sScanDesc:'사이버펑크 효과', sAnim:'부드러운 애니메이션', sAnimDesc:'부드러운 화면 전환',
+    sLang:'TMDB 언어', sLangDesc:'메타데이터 언어 변경', sDark:'퓨어 블랙 모드', sDarkDesc:'OLED를 위한 완전한 검은색', sPart:'파티클 효과', sPartDesc:'배경 애니메이션', sScan:'스캔라인', sScanDesc:'사이버펑크 효과', sAnim:'부드러운 애니메이션', sAnimDesc:'부드러운 화면 전환',
+    sWallpaper:'배경화면', sWallpaperDesc:'사이버펑크 배경 프리셋 선택', sSound:'클릭 사운드', sSoundDesc:'요소 클릭 시 소리 재생', sSoundPreset:'사운드 프리셋', sVolume:'음량',
     sAuto:'자동 재생', sAutoDesc:'다음 에피소드 자동 재생', sSrv:'기본 서버', sSrvDesc:'기본 스트리밍 서버',
     sClearH:'기록 삭제', sClearHDesc:'모든 시청 기록 삭제', sClearW:'목록 삭제', sClearWDesc:'저장된 모든 작품 삭제', sReset:'전체 초기화', sResetDesc:'모든 로컬 데이터 삭제', sDel:'삭제',
     sNotifAd:'광고 알림', sNotifAdDesc:'광고 차단 시 알림 표시', sNotifSys:'시스템 알림', sNotifSysDesc:'브라우저 알림 허용', sNotifSnd:'알림음', sNotifSndDesc:'알림 발생 시 소리 재생',
@@ -6682,7 +6716,8 @@ const UI_LANGS = {
     fStudio:'制作公司', fCountry:'制片国家', fLang:'语言', fBudget:'预算',
     emptyTrailer:'暂无预告片。', emptyCast:'暂无演员信息。', emptyReviews:'暂无评价。', emptySimilar:'暂无相似推荐。',
     sTitle:'设置', sTampilan:'外观', sPlayer:'播放器', sAdblock:'广告拦截', sData:'数据', sNotif:'通知', sDev:'开发者', sCache:'缓存', sAbout:'关于',
-    sLang:'TMDB语言', sLangDesc:'更改电影元数据语言（标题、简介）', sDark:'深色模式', sDarkDesc:'始终开启（赛博朋克模式）', sPart:'粒子效果', sPartDesc:'背景粒子动画', sScan:'扫描线效果', sScanDesc:'赛博朋克扫描线', sAnim:'平滑动画', sAnimDesc:'平滑的界面过渡',
+    sLang:'TMDB语言', sLangDesc:'更改电影元数据语言（标题、简介）', sDark:'纯黑模式', sDarkDesc:'关闭赛博蓝光效果，适用于OLED', sPart:'粒子效果', sPartDesc:'背景粒子动画', sScan:'扫描线效果', sScanDesc:'赛博朋克扫描线', sAnim:'平滑动画', sAnimDesc:'平滑的界面过渡',
+    sWallpaper:'背景壁纸', sWallpaperDesc:'选择赛博朋克背景预设', sSound:'点击音效', sSoundDesc:'点击元素时的声音效果', sSoundPreset:'音效预设', sVolume:'音量',
     sAuto:'自动播放下一集', sAutoDesc:'自动播放下一集内容', sSrv:'默认服务器', sSrvDesc:'优先使用的播放服务器',
     sClearH:'清除历史', sClearHDesc:'删除所有观看历史记录', sClearW:'清除收藏', sClearWDesc:'删除所有已收藏的内容', sReset:'重置所有数据', sResetDesc:'删除所有本地数据', sDel:'删除',
     sNotifAd:'广告拦截通知', sNotifAdDesc:'拦截广告时显示通知', sNotifSys:'系统通知', sNotifSysDesc:'浏览器通知（如果允许）', sNotifSnd:'通知声音', sNotifSndDesc:'显示通知时播放声音',
@@ -6710,7 +6745,8 @@ const UI_LANGS = {
     fStudio:'制作公司', fCountry:'制片国家', fLang:'语言', fBudget:'预算',
     emptyTrailer:'暂无预告片。', emptyCast:'暂无演员信息。', emptyReviews:'暂无评价。', emptySimilar:'暂无相似推荐。',
     sTitle:'设置', sTampilan:'外观', sPlayer:'播放器', sAdblock:'广告拦截', sData:'数据', sNotif:'通知', sDev:'开发者', sCache:'缓存', sAbout:'关于',
-    sLang:'TMDB语言', sLangDesc:'更改电影元数据语言（标题、简介）', sDark:'深色模式', sDarkDesc:'始终开启（赛博朋克模式）', sPart:'粒子效果', sPartDesc:'背景粒子动画', sScan:'扫描线效果', sScanDesc:'赛博朋克扫描线', sAnim:'平滑动画', sAnimDesc:'平滑的界面过渡',
+    sLang:'TMDB语言', sLangDesc:'更改电影元数据语言（标题、简介）', sDark:'纯黑模式', sDarkDesc:'关闭赛博蓝光效果，适用于OLED', sPart:'粒子效果', sPartDesc:'背景粒子动画', sScan:'扫描线效果', sScanDesc:'赛博朋克扫描线', sAnim:'平滑动画', sAnimDesc:'平滑的界面过渡',
+    sWallpaper:'背景壁纸', sWallpaperDesc:'选择赛博朋克背景预设', sSound:'点击音效', sSoundDesc:'点击元素时的声音效果', sSoundPreset:'音效预设', sVolume:'音量',
     sAuto:'自动播放下一集', sAutoDesc:'自动播放下一集内容', sSrv:'默认服务器', sSrvDesc:'优先使用的播放服务器',
     sClearH:'清除历史', sClearHDesc:'删除所有观看历史记录', sClearW:'清除收藏', sClearWDesc:'删除所有已收藏的内容', sReset:'重置所有数据', sResetDesc:'删除所有本地数据', sDel:'删除',
     sNotifAd:'广告拦截通知', sNotifAdDesc:'拦截广告时显示通知', sNotifSys:'系统通知', sNotifSysDesc:'浏览器通知（如果允许）', sNotifSnd:'通知声音', sNotifSndDesc:'显示通知时播放声音',
@@ -6769,7 +6805,11 @@ function toggleParticles(on) {
 }
 
 function toggleScanline(on) {
-  document.body.style.setProperty('--scanline-opacity', on ? '1' : '0');
+  document.body.style.setProperty('--scanline-display', on ? 'block' : 'none');
+}
+
+function toggleGrid(on) {
+  document.body.style.setProperty('--grid-display', on ? 'block' : 'none');
 }
 
 // ============================================================
@@ -7020,9 +7060,12 @@ async function init() {
   // Apply saved settings
   const s = state.settings;
   if (s.particles === false) toggleParticles(false);
-  if (s.scanline === false) toggleScanline(false);
+  if (s.scanline === true) toggleScanline(true);
+  if (s.grid === true) toggleGrid(true);
   if (s.devMode === true) toggleDevMode(true);
   if (s.consoleOverlay === true) toggleConsoleOverlay(true);
+  if (s.pureBlack === true) togglePureBlack(true);
+  if (s.wallpaperUrl) applyWallpaper(s.wallpaperUrl);
 }
 
 // ============================================================
