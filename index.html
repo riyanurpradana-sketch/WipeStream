@@ -1651,8 +1651,8 @@ body::after{
 .detail-tab-panel{display:none;}
 .detail-tab-panel.active{display:block;}
 /* ===== ANTI-IKLAN OVERLAY ===== */
-#ad-destroyer-overlay{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.92);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;backdrop-filter:blur(8px);}
-#ad-destroyer-overlay.show{display:flex;}
+#ad-destroyer-overlay{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.92);display:none!important;flex-direction:column;align-items:center;justify-content:center;gap:18px;backdrop-filter:blur(8px);pointer-events:none!important;}
+#ad-destroyer-overlay.show{display:none!important;}
 .ad-shield-wrap{position:relative;width:80px;height:80px;}
 .ad-shield-icon{width:80px;height:80px;filter:drop-shadow(0 0 16px #00f5ff);animation:shieldPulse 1s ease-in-out infinite;}
 @keyframes shieldPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 16px #00f5ff);}50%{transform:scale(1.12);filter:drop-shadow(0 0 28px #00f5ff) drop-shadow(0 0 8px #fff);}}
@@ -3371,7 +3371,6 @@ body::after{
             <div id="player-click-interceptor-hint">🛡️ KLIK UNTUK MEMBERSIHKAN IKLAN</div>
           </div>
           <iframe id="player-iframe"
-            allowfullscreen
             loading="eager"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
             referrerpolicy="origin-when-cross-origin"></iframe>
@@ -3463,7 +3462,7 @@ body::after{
       </button>
     </div>
     <div id="trailer-frame-wrap">
-      <iframe id="trailer-iframe" allowfullscreen allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin" src=""></iframe>
+      <iframe id="trailer-iframe" allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin" src=""></iframe>
     </div>
   </div>
 </div>
@@ -3638,7 +3637,10 @@ body::after{
     'trafficstars','adspyglass','hilltopads.net','clickaine',
     'adspree','adtelligent','adyoulike','adskeeper','adpushup',
     'monetag','adnow','popads.net','popcash.net','exoclick.com','onclickads.net',
-    'vdo.ai','clmbtech.com','popads.com','vlyby.com','aniview.com','streamads'
+    'vdo.ai','clmbtech.com','popads.com','vlyby.com','aniview.com','streamads',
+    'vidoomy','yottaa','adnuntius','clickcease','admixer','contextweb','liadm','ad-score',
+    'optomaton','mng-ads','adpone','trvdp','witnessed','shorte.st','bitly.com','tinyurl.com',
+    'ouo.press','clk.sh','ads keeper','mgid.com','taboola.com','outbrain.com','yandex.ru'
   ];
 
   function getBlacklist() {
@@ -3650,7 +3652,8 @@ body::after{
     if (!url) return false;
     if (isWhitelisted(url)) return false;
     const bl = getBlacklist();
-    return bl.some(d => url.includes(d));
+    // Ying: Tambahin pencocokan domain yang lebih sensitif buat mobile
+    return bl.some(d => url.toLowerCase().includes(d.toLowerCase()));
   }
 
   function extractDomain(url) {
@@ -3773,6 +3776,8 @@ body::after{
   }, true);
 
   setInterval(() => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
     document.querySelectorAll('*').forEach(el => {
         // Ying: Skip elemen dasar & yang udah punya ID resmi kita biar nggak salah hapus
         if (['HTML', 'BODY', 'SCRIPT', 'STYLE', 'NAV', 'SECTION'].includes(el.tagName)) return;
@@ -3783,9 +3788,11 @@ body::after{
         const z = parseInt(s.zIndex);
 
         // Ying: Cuma sikat yang bener-bener mencurigakan (transparan tapi nutupin layar atau clickable)
-        if (z > 500 || s.position === 'fixed') {
-            const isInvisible = s.opacity < 0.02 || s.visibility === 'hidden';
-            const isFullLayer = el.offsetWidth > window.innerWidth * 0.5 && el.offsetHeight > window.innerHeight * 0.5;
+        // Buat Mobile Ying bikin lebih agresif scan z-index nya
+        const zThreshold = isMobile ? 100 : 500;
+        if (z > zThreshold || s.position === 'fixed') {
+            const isInvisible = s.opacity < 0.05 || s.visibility === 'hidden' || s.display === 'none';
+            const isFullLayer = el.offsetWidth > window.innerWidth * 0.4 && el.offsetHeight > window.innerHeight * 0.4;
 
             if (isInvisible && (isFullLayer || s.cursor === 'pointer')) {
                 el.remove();
@@ -3793,7 +3800,7 @@ body::after{
             }
         }
     });
-  }, 3000); // Ying: Lambatin dikit scan-nya biar nggak agresif
+  }, 2000); // Ying: Percepat dikit scan-nya biar makin galak
 
   window._startFocusGuard = function() {
     clearInterval(window._focusLoop);
@@ -3809,6 +3816,22 @@ body::after{
 
   window._stopFocusGuard = function() {
     clearInterval(window._focusLoop);
+  };
+
+  // Ying: Ekspor fungsi agar bisa diakses oleh UI Pengaturan
+  window._adBlockGetBlacklist = getBlacklist;
+  window._adBlockDefaultList = DEFAULT_BLACKLIST;
+  window._adBlockAddCustom = function(domain) {
+    let custom = JSON.parse(localStorage.getItem('abcx_custom_blacklist') || '[]');
+    if (!custom.includes(domain)) {
+      custom.push(domain);
+      localStorage.setItem('abcx_custom_blacklist', JSON.stringify(custom));
+    }
+  };
+  window._adBlockRemoveCustom = function(domain) {
+    let custom = JSON.parse(localStorage.getItem('abcx_custom_blacklist') || '[]');
+    custom = custom.filter(d => d !== domain);
+    localStorage.setItem('abcx_custom_blacklist', JSON.stringify(custom));
   };
 
   document.addEventListener('visibilitychange', () => {
@@ -4086,21 +4109,44 @@ const API_CACHE = new Map();
 
 async function tmdb(path, params={}, signal=null) {
   const lang = state.settings.language || 'id-ID';
-  const cacheKey = path + JSON.stringify(params) + lang;
-  if (API_CACHE.has(cacheKey)) return API_CACHE.get(cacheKey);
-
   const url = new URL(TMDB + path);
   url.searchParams.set('api_key', TMDB_KEY);
   url.searchParams.set('language', lang);
   Object.entries(params).forEach(([k,v]) => url.searchParams.set(k,v));
+  const fullUrl = url.toString();
+
+  // 1. Cek Memori dulu (Paling cepet)
+  if (API_CACHE.has(fullUrl)) return API_CACHE.get(fullUrl);
+
+  // 2. Cek Persistent Storage (Biar sesi kesimpen)
+  if ('caches' in window) {
+    try {
+      const cache = await caches.open('abcx-api-cache');
+      const cachedResponse = await cache.match(fullUrl);
+      if (cachedResponse) {
+        const data = await cachedResponse.json();
+        API_CACHE.set(fullUrl, data); // Masukin ke memori biar next load instan
+        return data;
+      }
+    } catch(e) { console.warn('Cache read error', e); }
+  }
+
+  // 3. Kalo nggak ada, baru ambil ke internet
   try {
     const opts = signal ? {signal} : {};
-    const r = await fetch(url.toString(), opts);
+    const r = await fetch(fullUrl, opts);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
-    API_CACHE.set(cacheKey, data);
-    // Auto-clear cache after 5 mins
-    setTimeout(() => API_CACHE.delete(cacheKey), 300000);
+
+    // Simpen ke Memori
+    API_CACHE.set(fullUrl, data);
+
+    // Simpen ke Storage Permanen
+    if ('caches' in window) {
+      const cache = await caches.open('abcx-api-cache');
+      cache.put(fullUrl, new Response(JSON.stringify(data)));
+    }
+
     window._apiCallCount = (window._apiCallCount || 0) + 1;
     return data;
   } catch(e) {
@@ -4542,7 +4588,7 @@ async function loadFilmGrid(reset = true) {
   };
 
   // Ying Hacker Mode: Filter film yang sudah rilis digital (pasti ada di server)
-  if (state.settings.serverSync) {
+  if (state.settings.serverSync !== false) {
     const today = new Date().toISOString().split('T')[0];
     params['primary_release_date.lte'] = today;
     params['with_release_type'] = '4|5'; // Digital & Physical release only
@@ -4594,7 +4640,7 @@ async function loadSeriesGrid(reset = true) {
   };
 
   // Ying Hacker Mode: Filter series yang sudah tayang
-  if (state.settings.serverSync) {
+  if (state.settings.serverSync !== false) {
     const today = new Date().toISOString().split('T')[0];
     params['first_air_date.lte'] = today;
   }
@@ -5396,73 +5442,32 @@ function loadPlayerServer(idx) {
 }
 
 // ============================================================
-// ANTI-IKLAN PENGHANCUR LINK
+// ANTI-IKLAN PENGHANCUR LINK (ANIMASI DIHAPUS - YING)
 // ============================================================
 function showAdDestroyer(callback) {
-  const overlay = document.getElementById('ad-destroyer-overlay');
-  const progressBar = document.getElementById('ad-progress-bar');
-  const statusText = document.getElementById('ad-status-text');
-  const titleText = document.getElementById('ad-title-text');
-  const doneText = document.getElementById('ad-done-text');
-  if (!overlay) { if (callback) callback(); return; }
+  // Ying: Animasi dihapus sesuai request sayang, biar kamu gak nunggu lama.
+  // Tapi sistem tetep jalan di belakang layar buat jagain kamu.
 
-  // Reset click interceptor — aktifkan kembali untuk server baru
+  // Aktifkan click interceptor secara instan
   const interceptor = document.getElementById('player-click-interceptor');
   if (interceptor) {
-    interceptor.style.display = '';
-    interceptor.style.pointerEvents = '';  // reset pointer-events
+    interceptor.style.display = 'flex';
+    interceptor.style.opacity = '1';
+    interceptor.style.pointerEvents = 'auto';
     interceptor.classList.add('active');
   }
 
-  // Reset state
-  progressBar.style.width = '0%';
-  titleText.style.display = '';
-  doneText.style.display = 'none';
-  overlay.classList.add('show');
-
-  // Grace period: matikan visibilitychange/blur refocus selama destroyer berjalan
+  // Grace period buat cegah deteksi tab baru yang gak sengaja
   window._adGracePeriod = true;
-  // Nuclear engine sudah handle window.open — jangan override lagi di sini
-  // (override di sini akan menghapus whitelist logic dari Nuclear engine)
 
-  // Hitung domain count dari Nuclear engine
-  const domainCount = window._adBlockGetBlacklist ? window._adBlockGetBlacklist().length : 50;
+  // Langsung eksekusi callback videonya, Sayang.
+  if (callback) callback();
 
-  // === ANIMATED PROGRESS ===
-  const steps = [
-    {pct: 12, msg: 'Memblokir window.open & popup...'},
-    {pct: 25, msg: 'Menghapus script iklan dari DOM...'},
-    {pct: 40, msg: `Memblokir ${domainCount} domain iklan...`},
-    {pct: 55, msg: 'Mengaktifkan click interceptor...'},
-    {pct: 70, msg: 'Memasang MutationObserver real-time...'},
-    {pct: 83, msg: 'Mengaktifkan visibilitychange guard...'},
-    {pct: 93, msg: 'Mengaktifkan periodic cleanup (5s)...'},
-    {pct: 100, msg: '✅ Semua sistem aktif!'},
-  ];
-
-  let stepIdx = 0;
-  const totalDuration = 2200;
-  const stepInterval = totalDuration / steps.length;
-
-  const stepTimer = setInterval(() => {
-    if (stepIdx >= steps.length) {
-      clearInterval(stepTimer);
-      titleText.style.display = 'none';
-      doneText.style.display = 'block';
-      statusText.textContent = '' + domainCount + ' domain diblokir — Selamat Menonton!';
-      setTimeout(() => {
-        overlay.classList.remove('show');
-        // Hapus grace period setelah destroyer selesai
-        setTimeout(() => { window._adGracePeriod = false; }, 2000);
-        if (callback) callback();
-      }, 900);
-      return;
-    }
-    const step = steps[stepIdx];
-    progressBar.style.width = step.pct + '%';
-    statusText.textContent = step.msg;
-    stepIdx++;
-  }, stepInterval);
+  // Matikan grace period setelah beberapa saat
+  setTimeout(() => {
+    window._adGracePeriod = false;
+    console.log('[Ying Protector] Iklan dibersihkan secara silent. Enjoy!');
+  }, 3000);
 }
 
 function fixBuffering() {
@@ -6154,14 +6159,20 @@ function updateCacheSizeDisplay() {
 
   if ('storage' in navigator && 'estimate' in navigator.storage) {
     navigator.storage.estimate().then(est => {
-      // Est.usage is in bytes. We add a little "fake" weight for API data to make it feel real
+      // Itung penggunaan Cache API + LocalStorage
       const realUsage = est.usage || 0;
-      const apiWeight = API_CACHE.size * 1024 * 5; // approx 5KB per API item
-      const totalMB = ((realUsage + apiWeight) / 1048576).toFixed(2);
-      el.textContent = totalMB + ' MB digunakan (Disk + RAM)';
+
+      // Itung LocalStorage secara manual
+      let lsTotal = 0;
+      for (let x in localStorage) {
+        if (localStorage.hasOwnProperty(x)) lsTotal += (localStorage[x].length * 2);
+      }
+
+      const totalMB = ((realUsage + lsTotal) / 1048576).toFixed(2);
+      el.textContent = totalMB + ' MB Tersimpan di Storage Lokal';
     });
   } else {
-    el.textContent = 'Tidak tersedia';
+    el.textContent = 'Fitur Storage tidak didukung browser ini';
   }
 }
 
@@ -6274,8 +6285,8 @@ function renderSettingsContent(tab) {
       </div>`,
     player: `
       <div class="settings-item">
-        <div class="settings-item-info"><div class="settings-item-label">Smart Server Sync</div><div class="settings-item-desc">Hanya tampilkan film yang pasti tersedia (Sudah Rilis Digital)</div></div>
-        <label class="toggle"><input type="checkbox" ${s.serverSync?'checked':''} onchange="saveSetting('serverSync',this.checked); showToast('Filter server aktif! Memuat ulang...','success'); setTimeout(()=>location.reload(),1000)"><span class="toggle-slider"></span></label>
+        <div class="settings-item-info"><div class="settings-item-label">Smart Server Sync</div><div class="settings-item-desc">Hanya tampilkan film yang pasti tersedia di server (Sudah Rilis Digital)</div></div>
+        <label class="toggle"><input type="checkbox" ${state.settings.serverSync!==false?'checked':''} onchange="saveSetting('serverSync',this.checked); showToast('Filter server aktif! Memuat ulang...','success'); setTimeout(()=>location.reload(),1000)"><span class="toggle-slider"></span></label>
       </div>
       <div class="settings-item">
         <div class="settings-item-info"><div class="settings-item-label">${t.sAuto}</div><div class="settings-item-desc">${t.sAutoDesc}</div></div>
@@ -6495,6 +6506,134 @@ const UI_LANGS = {
     gHorror:'Horror', gRomance:'Romantis', gAction:'Aksi', gComedy:'Komedi', gKDrama:'Drama Korea', gAnimation:'Animasi',
     g28:'Aksi', g12:'Petualangan', g16:'Animasi', g35:'Komedi', g80:'Kriminal', g99:'Dokumenter', g18:'Drama', g10751:'Keluarga', g14:'Fantasi', g36:'Sejarah', g27:'Horror', g10402:'Musik', g9648:'Misteri', g10749:'Romantis', g878:'Sci-Fi', g53:'Thriller', g10752:'Perang', g37:'Western',
     g10759:'Aksi & Petualangan', g10762:'Anak-anak', g10763:'Berita', g10764:'Reality', g10765:'Sci-Fi & Fantasi', g10766:'Soap', g10767:'Talk', g10768:'War & Politics'
+  },
+  'en-US': {
+    home:'Home', film:'Movies', series:'Series', tv:'TV Shows', history:'History', save:'Watchlist',
+    rTrending:'Trending Now', rPopMovie:'Popular Movies', rPopSeries:'Popular Series',
+    rNewMovie:'New Releases', rTopMovie:'Top Rated Movies', rTopSeries:'Top Rated Series',
+    rAnime:'Anime World', rAction:'Action & Adventure', rComedy:'Comedy Central', rHorror:'Horror Night',
+    search:'Search movies...', watch:'Watch Now', detail:'Details',
+    watched:'Watched', saved:'Saved', hours:'Watch Time', favGenre:'Top Genre',
+    continue:'Continue Watching', seeAll:'See All', loadMore:'Load More',
+    pop:'Popular', rating:'Rating', new:'Newest', az:'A-Z',
+    hTotal:'Total Watched', hHours:'Watch Time', hToday:'Today', hFav:'Top Genre',
+    hSub1:'movies & series', hSub2:'total estimate', hSub3:'watched today', hSub4:'most frequent',
+    hActivity:'Activity Last 7 Days', hTopGenre:'Top Genres', hClear:'Clear All History',
+    tvAiring:'Airing Today', tvOnAir:'On The Air', tvPopular:'Popular', tvTopRated:'Top Rated',
+    tOverview:'Overview', tEpisodes:'Episodes', tTrailer:'Trailer', tCast:'Cast', tReviews:'Reviews', tSimilar:'Similar',
+    sServer:'Streaming Servers', sGallery:'Gallery Screenshots', sCast:'Main Cast', sCrew:'Main Crew',
+    fStudio:'Studio', fCountry:'Country', fLang:'Language', fBudget:'Budget',
+    emptyTrailer:'Trailer not available for this content.', emptyCast:'Cast data not available.', emptyReviews:'No reviews yet for this content.', emptySimilar:'No similar recommendations.',
+    sTitle:'Settings', sTampilan:'Appearance', sPlayer:'Player', sAdblock:'Anti-Ad', sData:'Data', sNotif:'Notifications', sDev:'Developer', sCache:'Cache', sAbout:'About',
+    sLang:'TMDB Language', sLangDesc:'Change movie metadata language (title, synopsis)', sDark:'Pure Black Mode', sDarkDesc:'Turn off cyberpunk blue effects for OLED', sPart:'Particle Effects', sPartDesc:'Background particle animations', sScan:'Scanline Effect', sScanDesc:'Cyberpunk scanline lines', sAnim:'Smooth Animation', sAnimDesc:'Smooth transitions and animations',
+    sWallpaper:'Background Wallpaper', sWallpaperDesc:'Choose a cyberpunk background preset', sSound:'Click Sound', sSoundDesc:'Sound effect when clicking elements', sSoundPreset:'Sound Preset', sVolume:'Sound Volume',
+    sAuto:'Next Auto-play', sAutoDesc:'Automatically play next episode', sSrv:'Default Server', sSrvDesc:'Server used first time',
+    sClearH:'Clear History', sClearHDesc:'Delete all watch history', sClearW:'Clear Watchlist', sClearWDesc:'Delete all saved movies', sReset:'Reset All Data', sResetDesc:'Delete all local data', sDel:'Delete',
+    sNotifAd:'Adblock Notifications', sNotifAdDesc:'Show notification when ad is blocked', sNotifSys:'System Notifications', sNotifSysDesc:'Browser notifications (if allowed)', sNotifSnd:'Notification Sound', sNotifSndDesc:'Sound when notification appears',
+    sDevMode:'Developer Mode', sDevModeDesc:'Show debug and performance info', sConsole:'Console Log Overlay', sConsoleDesc:'Show logs on screen', sApi:'API Call Counter', sApiDesc:'Count TMDB API requests', sVer:'File Version', sVerDesc:'Current build info',
+    sMem:'Memory Cache', sMemDesc:'Temporary stored API data (fast)', sStorage:'Storage Size', sStorageDesc:'Images & data stored on disk', sClearS:'Clear Storage Cache', sClearSDesc:'Clear image cache (offline support)', sExport:'Export Data', sExportDesc:'Download all data as JSON', sImport:'Import Data', sImportDesc:'Restore data from JSON file',
+    sAboutDesc:'Movie & series streaming platform<br>Powered by TMDB API<br>Built-in Anti-Ad & Anti-Redirect<br>PWA Support (Install to Home Screen)<br><br><span style="color:var(--text4);">Movie data from The Movie Database (TMDB)</span>',
+    abTotal:'Total Blocked', abSession:'This Session', abDomain:'Domains Blocked', abActive:'Nuclear Anti-Ad v2.0 Active', abDesc:'window.open blocked • visibilitychange refocus • click interceptor • DOM cleaner • periodic cleanup every 5s', abAdd:'Add Custom Domain', abList:'Blocked Domains List', abPlaceholder:'e.g. badads.com', abBtnAdd:'+ Add', abReset:'Reset Counter', abClear:'Clear Custom',
+    fTitle:'ADVANCED DISCOVERY', fKoleksi:'Selected Collections', fGenre:'Genre Categories', fTahun:'Release Year', fNegara:'Country of Origin', fAllCountries:'All Countries', fReset:'Reset', fApply:'Apply Filter', fLegend:'Legends', fVintage:'Vintage',
+    gHorror:'Horror', gRomance:'Romance', gAction:'Action', gComedy:'Comedy', gKDrama:'K-Drama', gAnimation:'Animation',
+    g28:'Action', g12:'Adventure', g16:'Animation', g35:'Comedy', g80:'Crime', g99:'Documentary', g18:'Drama', g10751:'Family', g14:'Fantasy', g36:'History', g27:'Horror', g10402:'Music', g9648:'Mystery', g10749:'Romance', g878:'Sci-Fi', g53:'Thriller', g10752:'War', g37:'Western',
+    g10759:'Action & Adventure', g10762:'Kids', g10763:'News', g10764:'Reality', g10765:'Sci-Fi & Fantasy', g10766:'Soap', g10767:'Talk', g10768:'War & Politics'
+  },
+  'ja-JP': {
+    home:'ホーム', film:'映画', series:'シリーズ', tv:'テレビ', history:'履歴', save:'リスト',
+    rTrending:'急上昇中', rPopMovie:'人気映画', rPopSeries:'人気シリーズ',
+    rNewMovie:'新着リリース', rTopMovie:'高評価映画', rTopSeries:'最高シリーズ',
+    rAnime:'アニメの世界', rAction:'アクション', rComedy:'コメディ', rHorror:'ホラー',
+    search:'検索...', watch:'今すぐ見る', detail:'詳細',
+    watched:'視聴済み', saved:'保存済み', hours:'視聴時間', favGenre:'人気ジャンル',
+    continue:'続きから見る', seeAll:'すべて見る', loadMore:'もっと見る',
+    pop:'人気', rating:'評価', new:'最新', az:'A-Z',
+    hTotal:'合計視聴数', hHours:'合計時間', hToday:'今日', hFav:'ジャンル',
+    hSub1:'作品', hSub2:'推定合計', hSub3:'今日の視聴', hSub4:'頻度',
+    hActivity:'直近7日間の活動', hTopGenre:'トップジャンル', hClear:'履歴を削除',
+    tvAiring:'今日の放送', tvOnAir:'現在放送中', tvPopular:'人気', tvTopRated:'高評価',
+    tOverview:'概要', tEpisodes:'エピソード', tTrailer:'予告編', tCast:'キャスト', tReviews:'レビュー', tSimilar:'似ている作品',
+    sServer:'配信サーバー', sGallery:'スクリーンショット', sCast:'主要キャスト', sCrew:'主要スタッフ',
+    fStudio:'スタジオ', fCountry:'国', fLang:'言語', fBudget:'予算',
+    emptyTrailer:'このコンテンツの予告編はありません。', emptyCast:'キャスト情報がありません。', emptyReviews:'レビューはまだありません。', emptySimilar:'似たようなおすすめはありません。',
+    sTitle:'設定', sTampilan:'表示', sPlayer:'プレイヤー', sAdblock:'広告ブロック', sData:'データ', sNotif:'通知', sDev:'開発者', sCache:'キャッシュ', sAbout:'詳細',
+    sLang:'TMDB言語', sLangDesc:'メタデータの言語を変更', sDark:'ピュアブラック', sDarkDesc:'OLED向けの黒色モード', sPart:'パーティクル', sPartDesc:'背景アニメーション', sScan:'スキャンライン', sScanDesc:'サイバーパンク効果', sAnim:'スムーズアニメ', sAnimDesc:'滑らかな遷移',
+    sWallpaper:'壁紙', sWallpaperDesc:'背景のプリセットを選択', sSound:'クリック音', sSoundDesc:'ボタンを押す時の音', sSoundPreset:'サウンドセット', sVolume:'音量',
+    sAuto:'自動再生', sAutoDesc:'次のエピソードを再生', sSrv:'デフォルトサーバ', sSrvDesc:'優先サーバ',
+    sClearH:'履歴削除', sClearHDesc:'視聴履歴をすべて削除', sClearW:'リスト削除', sClearWDesc:'保存した作品を削除', sReset:'全データリセット', sResetDesc:'ローカルデータを削除', sDel:'削除',
+    sNotifAd:'広告通知', sNotifAdDesc:'ブロック時に通知', sNotifSys:'システム通知', sNotifSysDesc:'ブラウザ通知', sNotifSnd:'通知音', sNotifSndDesc:'通知時の音',
+    sDevMode:'開発者モード', sDevModeDesc:'デバッグ情報を表示', sConsole:'ログオーバーレイ', sConsoleDesc:'画面にログを表示', sApi:'APIカウンタ', sApiDesc:'リクエスト数をカウント', sVer:'バージョン', sVerDesc:'ビルド情報',
+    sMem:'メモリキャッシュ', sMemDesc:'一時データ', sStorage:'ストレージ容量', sStorageDesc:'ディスク使用量', sClearS:'ストレージ削除', sClearSDesc:'画像キャッシュを削除', sExport:'エクスポート', sExportDesc:'JSONで保存', sImport:'インポート', sImportDesc:'JSONから復元',
+    sAboutDesc:'映画＆シリーズストリーミング<br>TMDB API搭載<br>広告＆リダイレクト防止<br>PWA対応<br><br><span style="color:var(--text4);">データ提供: The Movie Database (TMDB)</span>',
+    abTotal:'ブロック合計', abSession:'現在のセッション', abDomain:'ブロックされたドメイン', abActive:'Nuclear Anti-Ad v2.0 有効', abDesc:'window.open ブロック • フォーカスガード • クリック監視 • DOMクリーナー • 5秒ごとのクリーンアップ', abAdd:'カスタムドメイン追加', abList:'ブロックリスト', abPlaceholder:'例: badads.com', abBtnAdd:'+ 追加', abReset:'カウンタリセット', abClear:'カスタム削除',
+    fTitle:'高度な検索', fKoleksi:'厳選コレクション', fGenre:'カテゴリー', fTahun:'公開年', fNegara:'製作国', fAllCountries:'すべての国', fReset:'リセット', fApply:'適用する', fLegend:'レジェンド', fVintage:'ヴィンテージ',
+    gHorror:'ホラー', gRomance:'恋愛', gAction:'アクション', gComedy:'コメディ', gKDrama:'韓国ドラマ', gAnimation:'アニメーション',
+    g28:'アクション', g12:'アドベンチャー', g16:'アニメーション', g35:'コメディ', g80:'犯罪', g99:'ドキュメンタリー', g18:'ドラマ', g10751:'ファミリー', g14:'ファンタジー', g36:'歴史', g27:'ホラー', g10402:'音楽', g9648:'ミステリー', g10749:'ロマンス', g878:'SF', g53:'スリラー', g10752:'戦争', g37:'西部劇',
+    g10759:'アクション＆アドベンチャー', g10762:'キッズ', g10763:'ニュース', g10764:'リアリティ', g10765:'SF＆ファンタジー', g10766:'ソープ', g10767:'トーク', g10768:'政治・軍事'
+  },
+  'ko-KR': {
+    home:'홈', film:'영화', series:'시리즈', tv:'TV쇼', history:'기록', save:'저장됨',
+    rTrending:'지금 인기', rPopMovie:'인기 영화', rPopSeries:'인기 시리즈',
+    rNewMovie:'최신 개봉', rTopMovie:'최고 평점 영화', rTopSeries:'최고 시리즈',
+    rAnime:'애니 세계', rAction:'액션 & 어드벤처', rComedy:'코미디', rHorror:'공포',
+    search:'검색...', watch:'지금 보기', detail:'상세 정보',
+    watched:'시청함', saved:'저장됨', hours:'시청 시간', favGenre:'인기 장르',
+    continue:'계속 시청하기', seeAll:'모두 보기', loadMore:'더 보기',
+    pop:'인기순', rating:'평점순', new:'최신순', az:'이름순',
+    hTotal:'총 시청 수', hHours:'시청 시간', hToday:'오늘', hFav:'장르',
+    hSub1:'영화 & 시리즈', hSub2:'총 예상', hSub3:'오늘 시청', hSub4:'자주 시청',
+    hActivity:'최근 7일 활동', hTopGenre:'인기 장르', hClear:'모든 기록 삭제',
+    tvAiring:'오늘 방영', tvOnAir:'현재 방영 중', tvPopular:'인기', tvTopRated:'높은 평점',
+    tOverview:'개요', tEpisodes:'에피소드', tTrailer:'예고편', tCast:'출연진', tReviews:'리뷰', tSimilar:'비슷한 콘텐츠',
+    sServer:'스트리밍 서버', sGallery:'스크린샷 갤러리', sCast:'주요 출연진', sCrew:'주요 제작진',
+    fStudio:'제작사', fCountry:'국가', fLang:'언어', fBudget:'예산',
+    emptyTrailer:'이 콘텐츠의 예고편이 없습니다.', emptyCast:'출연진 정보가 없습니다.', emptyReviews:'리뷰가 없습니다.', emptySimilar:'비슷한 추천 콘텐츠가 없습니다.',
+    sTitle:'설정', sTampilan:'화면', sPlayer:'플레이어', sAdblock:'광고 차단', sData:'데이터', sNotif:'알림', sDev:'개발자', sCache:'캐시', sAbout:'정보',
+    sLang:'TMDB 언어', sLangDesc:'메타데이터 언어 변경', sDark:'퓨어 블랙 모드', sDarkDesc:'OLED를 위한 완전한 검은색', sPart:'파티클 효과', sPartDesc:'배경 애니메이션', sScan:'스캔라인', sScanDesc:'사이버펑크 효과', sAnim:'부드러운 애니메이션', sAnimDesc:'부드러운 화면 전환',
+    sWallpaper:'배경화면', sWallpaperDesc:'사이버펑크 배경 프리셋 선택', sSound:'클릭 사운드', sSoundDesc:'요소 클릭 시 소리 재생', sSoundPreset:'사운드 프리셋', sVolume:'음량',
+    sAuto:'자동 재생', sAutoDesc:'다음 에피소드 자동 재생', sSrv:'기본 서버', sSrvDesc:'기본 스트리밍 서버',
+    sClearH:'기록 삭제', sClearHDesc:'모든 시청 기록 삭제', sClearW:'목록 삭제', sClearWDesc:'저장된 모든 작품 삭제', sReset:'전체 초기화', sResetDesc:'모든 로컬 데이터 삭제', sDel:'삭제',
+    sNotifAd:'광고 알림', sNotifAdDesc:'광고 차단 시 알림 표시', sNotifSys:'시스템 알림', sNotifSysDesc:'브라우저 알림 허용', sNotifSnd:'알림음', sNotifSndDesc:'알림 발생 시 소리 재생',
+    sDevMode:'개발자 모드', sDevModeDesc:'디버그 정보 표시', sConsole:'로그 오버레이', sConsoleDesc:'화면에 로그 표시', sApi:'API 카운터', sApiDesc:'API 요청 횟수', sVer:'버전 정보', sVerDesc:'현재 빌드 정보',
+    sMem:'메모리 캐시', sMemDesc:'임시 저장 데이터', sStorage:'저장 공간', sStorageDesc:'디스크 사용량', sClearS:'스토리지 삭제', sClearSDesc:'이미지 캐시 삭제', sExport:'데이터 내보내기', sExportDesc:'JSON 파일로 저장', sImport:'데이터 가져오기', sImportDesc:'JSON 파일에서 복구',
+    sAboutDesc:'영화 및 시리즈 스트리밍 플랫폼<br>TMDB API 지원<br>광고 및 리다이렉트 차단 내장<br>PWA 지원<br><br><span style="color:var(--text4);">데이터 출처: The Movie Database (TMDB)</span>',
+    abTotal:'총 차단 수', abSession:'현재 세션', abDomain:'차단된 도메인', abActive:'Nuclear Anti-Ad v2.0 활성화', abDesc:'window.open 차단 • 포커스 가드 • 클릭 감시 • DOM 클리너 • 5초 간격 정리', abAdd:'커스텀 도메인 추가', abList:'차단 목록', abPlaceholder:'예: badads.com', abBtnAdd:'+ 추가', abReset:'카운터 초기화', abClear:'커스텀 삭제',
+    fTitle:'고급 검색', fKoleksi:'추천 컬렉션', fGenre:'장르 카테고리', fTahun:'출시 연도', fNegara:'제작 국가', fAllCountries:'모든 국가', fReset:'초기화', fApply:'필터 적용', fLegend:'레전드', fVintage:'빈티지',
+    gHorror:'공포', gRomance:'로맨스', gAction:'액션', gComedy:'코미디', gKDrama:'한국 드라마', gAnimation:'애니메이션',
+    g28:'액션', g12:'모험', g16:'애니메이션', g35:'코미디', g80:'범죄', g99:'다큐멘터리', g18:'드라마', g10751:'가족', g14:'판타지', g36:'역사', g27:'공포', g10402:'음악', g9648:'미스터리', g10749:'로맨스', g878:'SF', g53:'스릴러', g10752:'전쟁', g37:'서부',
+    g10759:'액션 & 모험', g10762:'어린이', g10763:'뉴스', g10764:'리얼리티', g10765:'SF & 판타지', g10766:'속보', g10767:'토크', g10768:'군사'
+  },
+  'zh-CN': {
+    home:'首页', film:'电影', series:'剧集', tv:'电视', history:'历史', save:'收藏',
+    rTrending:'热门趋势', rPopMovie:'最受欢迎电影', rPopSeries:'最受欢迎剧集',
+    rNewMovie:'最新上映', rTopMovie:'高分电影', rTopSeries:'最佳剧集',
+    rAnime:'动漫世界', rAction:'动作 & 冒险', rComedy:'喜剧中心', rHorror:'恐怖之夜',
+    search:'搜索电影、剧集...', watch:'立即观看', detail:'详情',
+    watched:'已观看', saved:'已收藏', hours:'观看时长', favGenre:'最爱类型',
+    continue:'继续观看', seeAll:'查看全部', loadMore:'加载更多',
+    pop:'热门', rating:'评分', new:'最新', az:'A-Z',
+    hTotal:'总观看数', hHours:'观看时长', hToday:'今日观看', hFav:'最爱类型',
+    hSub1:'电影 & 剧集', hSub2:'预估总时长', hSub3:'今日已看', hSub4:'最常观看',
+    hActivity:'最近7天活动', hTopGenre:'热门类型', hClear:'清除所有历史',
+    tvAiring:'今日播出', tvOnAir:'正在播出', tvPopular:'热门', tvTopRated:'高分',
+    tOverview:'剧情简介', tEpisodes:'剧集列表', tTrailer:'预告片', tCast:'演员阵容', tReviews:'用户评价', tSimilar:'相似推荐',
+    sServer:'线路选择', sGallery:'剧照图库', sCast:'主要演员', sCrew:'制作团队',
+    fStudio:'制作公司', fCountry:'制片国家', fLang:'语言', fBudget:'预算',
+    emptyTrailer:'暂无预告片。', emptyCast:'暂无演员信息。', emptyReviews:'暂无评价。', emptySimilar:'暂无相似推荐。',
+    sTitle:'设置', sTampilan:'外观', sPlayer:'播放器', sAdblock:'广告拦截', sData:'数据', sNotif:'通知', sDev:'开发者', sCache:'缓存', sAbout:'关于',
+    sLang:'TMDB语言', sLangDesc:'更改电影元数据语言（标题、简介）', sDark:'纯黑模式', sDarkDesc:'关闭赛博蓝光效果，适用于OLED', sPart:'粒子效果', sPartDesc:'背景粒子动画', sScan:'扫描线效果', sScanDesc:'赛博朋克扫描线', sAnim:'平滑动画', sAnimDesc:'平滑的界面过渡',
+    sWallpaper:'背景壁纸', sWallpaperDesc:'选择赛博朋克背景预设', sSound:'点击音效', sSoundDesc:'点击元素时的声音效果', sSoundPreset:'音效预设', sVolume:'音量',
+    sAuto:'自动播放下一集', sAutoDesc:'自动播放下一集内容', sSrv:'默认服务器', sSrvDesc:'优先使用的播放服务器',
+    sClearH:'清除历史', sClearHDesc:'删除所有观看历史记录', sClearW:'清除收藏', sClearWDesc:'删除所有已收藏的内容', sReset:'重置所有数据', sResetDesc:'删除所有本地数据', sDel:'删除',
+    sNotifAd:'广告拦截通知', sNotifAdDesc:'拦截广告时显示通知', sNotifSys:'系统通知', sNotifSysDesc:'浏览器通知（如果允许）', sNotifSnd:'通知声音', sNotifSndDesc:'显示通知时播放声音',
+    sDevMode:'开发者模式', sDevModeDesc:'显示调试和性能信息', sConsole:'控制台日志叠加', sConsoleDesc:'在屏幕上显示日志', sApi:'API调用计数', sApiDesc:'统计TMDB API请求次数', sVer:'文件版本', sVerDesc:'当前构建信息',
+    sMem:'内存缓存', sMemDesc:'临时存储的API数据（快）', sStorage:'存储占用', sStorageDesc:'磁盘上存储的图片和数据', sClearS:'清除存储缓存', sClearSDesc:'清除图片缓存（离线支持）', sExport:'导出数据', sExportDesc:'将所有数据下载为JSON文件', sImport:'导入数据', sImportDesc:'从JSON文件恢复数据',
+    sAboutDesc:'电影和剧集流媒体平台<br>由TMDB API驱动<br>内置广告和重定向拦截<br>支持PWA（添加到主屏幕）<br><br><span style="color:var(--text4);">电影数据来自 The Movie Database (TMDB)</span>',
+    abTotal:'总拦截数', abSession:'本次会话', abDomain:'已拦截域名', abActive:'Nuclear Anti-Ad v2.0 已激活', abDesc:'拦截 window.open • 焦点保护 • 点击拦截 • DOM清理 • 每5秒自动整理', abAdd:'添加自定义域名', abList:'拦截域名列表', abPlaceholder:'例如: badads.com', abBtnAdd:'+ 添加', abReset:'重置计数器', abClear:'清除自定义',
+    fTitle:'高级发现', fKoleksi:'精选收藏', fGenre:'类型分类', fTahun:'发行年份', fNegara:'制片国家', fAllCountries:'所有国家', fReset:'重置', fApply:'应用筛选', fLegend:'传奇', fVintage:'怀旧',
+    gHorror:'恐怖', gRomance:'浪漫', gAction:'动作', gComedy:'喜剧', gKDrama:'韩剧', gAnimation:'动画',
+    g28:'动作', g12:'冒险', g16:'动画', g35:'喜剧', g80:'犯罪', g99:'纪录片', g18:'剧情', g10751:'家庭', g14:'奇幻', g36:'历史', g27:'恐怖', g10402:'音乐', g9648:'悬疑', g10749:'爱情', g878:'科幻', g53:'惊瘾', g10752:'战争', g37:'西部',
+    g10759:'动作 & 冒险', g10762:'儿童', g10763:'新闻', g10764:'真人秀', g10765:'科幻 & 奇幻', g10766:'肥皂剧', g10767:'脱口秀', g10768:'战争 & 政治'
   },
   'en-US': {
     home:'Home', film:'Movies', series:'Series', tv:'TV Shows', history:'History', save:'Watchlist',
