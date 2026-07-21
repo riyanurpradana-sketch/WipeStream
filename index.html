@@ -3686,7 +3686,10 @@ body::after{
         }
       }
     }
-    showAdNotif(reason || 'default', url);
+    // Ying: Jangan tampilin notifikasi kalau cuma blokir overlay transparan biar gak nyepam
+    if (reason !== 'overlay') {
+        showAdNotif(reason || 'default', url);
+    }
   }
 
   const _notifMessages = {
@@ -3788,7 +3791,9 @@ body::after{
   }, {passive: false});
 
   setInterval(() => {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Ying: Fokus sniper cuma di area player aja biar gak salah hapus elemen web kita
+    const playerModal = document.getElementById('player-modal');
+    if (!playerModal || !playerModal.classList.contains('open')) return;
 
     document.querySelectorAll('*').forEach(el => {
         // Ying: Skip elemen dasar & yang udah punya ID resmi kita biar nggak salah hapus
