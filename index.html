@@ -3442,7 +3442,7 @@ body::after{
         </div>
       </div>
     </div>
-    <div id="player-servers" style="display:none;">
+    <div id="player-servers">
       <div id="player-servers-title">Pilih Server</div>
       <div id="player-server-list"></div>
     </div>
@@ -3855,7 +3855,12 @@ const IMG_BASE = 'https://image.tmdb.org/t/p/';
 const LANG = 'id-ID';
 
 const SERVERS = [
-  {name:'2Embed', desc:'Subtitle selector', quality:'HD', badges:['sub','hd'], urlFn:(id,type,s,e)=> type==='tv'?`https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`:`https://www.2embed.cc/embed/${id}`},
+  {name:'VidSrc TO', quality:'4K', urlFn:(id,type,s,e)=> `https://vidsrc.to/embed/${type}/${id}${type==='tv'?`/${s}/${e}`:''}`},
+  {name:'VidSrc ME', quality:'1080p', urlFn:(id,type,s,e)=> `https://vidsrc.me/embed/${type}?tmdb=${id}${type==='tv'?`&sea=${s}&epi=${e}`:''}`},
+  {name:'VidLink PRO', quality:'Multi', urlFn:(id,type,s,e)=> `https://vidlink.pro/embed/${type}/${id}${type==='tv'?`/${s}/${e}`:''}`},
+  {name:'2Embed', quality:'HD', urlFn:(id,type,s,e)=> type==='tv'?`https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`:`https://www.2embed.cc/embed/${id}`},
+  {name:'Smashy', quality:'Mirror', urlFn:(id,type,s,e)=> `https://player.smashystream.com/video/${id}${type==='tv'?`?s=${s}&e=${e}`:''}`},
+  {name:'AutoEmbed', quality:'Global', urlFn:(id,type,s,e)=> `https://autoembed.cc/embed/${type}/${id}${type==='tv'?`/${s}/${e}`:''}`}
 ];
 
 let state = {
@@ -5380,7 +5385,7 @@ function openPlayer(id, type, title='', season=1, episode=1, serverIdx = 0) {
 
 function loadPlayerServer(idx) {
   const {id, type, season, episode} = state.currentPlayer;
-  const server = SERVERS[0]; // Paksa 2Embed sayang
+  const server = SERVERS[idx];
   if (!server) return;
 
   // Ambil waktu terakhir buat resume
@@ -5412,8 +5417,8 @@ function loadPlayerServer(idx) {
   iframe.setAttribute('loading', 'eager');
 
   // Update active button
-  document.querySelectorAll('#player-server-list .server-btn').forEach((b,i) => b.classList.toggle('active', i===0));
-  state.currentPlayer.serverIdx = 0;
+  document.querySelectorAll('#player-server-list .server-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  state.currentPlayer.serverIdx = idx;
 
 
   // ===== ANTI-IKLAN PENGHANCUR =====
