@@ -3390,7 +3390,7 @@ body::after{
       </button>
     </div>
     <div id="trailer-frame-wrap">
-      <iframe id="trailer-iframe" allowfullscreen allow="autoplay; fullscreen" referrerpolicy="no-referrer" src=""></iframe>
+      <iframe id="trailer-iframe" allowfullscreen allow="autoplay; fullscreen" referrerpolicy="strict-origin-when-cross-origin" src=""></iframe>
     </div>
   </div>
 </div>
@@ -5494,8 +5494,8 @@ function applyPlayerFilter() {
 // ============================================================
 function openTrailer(key, title) {
   document.getElementById('trailer-title').textContent = title + ' - Trailer';
-  // Use youtube-nocookie to avoid error 153 and tracking
-  document.getElementById('trailer-iframe').src = `https://www.youtube-nocookie.com/embed/${key}?autoplay=1&rel=0&modestbranding=1`;
+  const origin = window.location.origin;
+  document.getElementById('trailer-iframe').src = `https://www.youtube.com/embed/${key}?autoplay=1&rel=0&modestbranding=1&origin=${encodeURIComponent(origin)}`;
   document.getElementById('trailer-modal').classList.add('open');
 }
 
